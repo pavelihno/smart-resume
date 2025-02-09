@@ -5,7 +5,6 @@ const SkillSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    category: String,
     details: [String]
 });
 

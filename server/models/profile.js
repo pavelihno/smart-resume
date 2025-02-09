@@ -11,7 +11,10 @@ const ProfileSchema = new mongoose.Schema({
     },
     phoneNumbers: [String],
     emails: [String],
-    links: [String],
+    links: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Link'
+    }],
     workExperiences: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'WorkExperience'
@@ -22,7 +25,7 @@ const ProfileSchema = new mongoose.Schema({
     }],
     skills: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Skill'
+        ref: 'ProfileSkill'
     }],
     projects: [{
         type: mongoose.Schema.Types.ObjectId,
