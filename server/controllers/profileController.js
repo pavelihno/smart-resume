@@ -117,20 +117,16 @@ const getSortedProfile = async (profileId) => {
 const generateProfileFile = async (req, res, type) => {
     try {
         const sortedProfile = await getSortedProfile(req.params.id);
-        // res.status(200).json({ sortedProfile });
         const documentPaths = await generatePDF(sortedProfile);
 
-        if (type === FILE_TYPE.PDF) {
-            const pdfPath = documentPaths.pdfPath;
-            res.status(200).sendFile(pdfPath, { root: '.' }, (err) => {
-                if (err) {
-                    return internalServerError(res, err.message);
-                }
-            });
-        } else if (type === FILE_TYPE.TEX) {
-            const texPath = documentPaths.texPath;
-            res.status(200).json({ texPath });
-        }
+        const filePath = type === FILE_TYPE.PDF ? documentPaths.pdfPath : documentPaths.texPath;
+
+        res.setHeader('Content-Disposition', `attachment; filename="${sortedProfile.name}. ${sortedProfile.title}.${type}"`);
+        res.status(200).sendFile(filePath, (err) => {
+            if (err) {
+                return internalServerError(res, err.message);
+            }
+        });
     } catch (error) {
         if (error.message === 'Profile not found') {
             return notFoundError(res, error.message);

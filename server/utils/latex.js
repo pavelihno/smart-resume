@@ -2,18 +2,15 @@ import latex from 'node-latex';
 import fs from 'fs';
 import path from 'path';
 import Handlebars from 'handlebars';
-import { promisify } from 'util';
-import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const templatePath = path.join(__dirname, '../static/templates/template.tex');
-const outputTexPath = path.join(__dirname, '../static/temp/output.tex');
-const outputPDFPath = path.join(__dirname, '../static/temp/output.pdf');
-
-const execAsync = promisify(exec);
+const DEFAULT_TEMPLATE_NAME = 'default';
+const TEMPLATE_FOLDER_PATH = path.join(__dirname, '../static/templates/');
+const OUTPUT_TEX_PATH = path.join(__dirname, '../static/temp/output.tex');
+const OUTPUT_PDF_PATH = path.join(__dirname, '../static/temp/output.pdf');
 
 export const escapeLatex = (text) => {
     if (typeof text !== 'string') {
@@ -33,17 +30,15 @@ export const escapeLatex = (text) => {
         .replace(/'/g, '\\textquotesingle{}');
 };
 
-const escapeProfileData = (data) => {
+export const escapeProfileData = (data) => {
     if (typeof data === 'string') {
         return escapeLatex(data);
-    } else if (data instanceof Date) {
-        return data.toLocaleString('default', { month: 'short', year: 'numeric' });
     } else if (Array.isArray(data)) {
         return data.map(escapeProfileData);
     } else if (typeof data === 'object' && data !== null) {
         const escapedData = {};
         for (const key in data) {
-            if (data.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
                 escapedData[key] = escapeProfileData(data[key]);
             }
         }
@@ -55,7 +50,7 @@ const escapeProfileData = (data) => {
 
 export const generatePDF = async (data) => {
     // Read LaTeX template
-    const templateContent = fs.readFileSync(templatePath, 'utf8');
+    const templateContent = fs.readFileSync(TEMPLATE_FOLDER_PATH + DEFAULT_TEMPLATE_NAME + '.tex', 'utf8');
     
     // Escape profile data
     const escapedData = escapeProfileData(data);
@@ -65,10 +60,10 @@ export const generatePDF = async (data) => {
     const latexContent = template(escapedData);
 
     // Save compiled LaTeX content to a .tex file
-    fs.writeFileSync(outputTexPath, latexContent);
+    fs.writeFileSync(OUTPUT_TEX_PATH, latexContent);
 
     // Write compiled PDF output to file
-    const outputStream = fs.createWriteStream(outputPDFPath);
+    const outputStream = fs.createWriteStream(OUTPUT_PDF_PATH);
     
     return new Promise((resolve, reject) => {
         const pdfStream = latex(latexContent);
@@ -80,7 +75,12 @@ export const generatePDF = async (data) => {
 
         outputStream.on('finish', () => {
             console.log('PDF successfully generated');
-            resolve({ pdfPath: outputPDFPath, texPath: outputTexPath });
+            resolve({ pdfPath: OUTPUT_PDF_PATH, texPath: OUTPUT_TEX_PATH });
         });
     });
+};
+
+export const listTemplates = () => {
+    const templateFiles = fs.readdirSync(TEMPLATE_FOLDER_PATH);
+    return templateFiles.map((file) => path.basename(file, '.tex'));
 };
