@@ -1,59 +1,56 @@
+// filepath: /projects/smart-resume/client/src/components/project/ProjectList.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import BaseList from '../BaseList';
 import { api } from '../../api';
 
-const EducationList = () => {
+const ProjectList = () => {
     const navigate = useNavigate();
-    const [educations, setEducations] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        const fetchEducations = async () => {
+        const fetchProjects = async () => {
             try {
-                const response = await api.get('/educations');
-                setEducations(response.data);
+                const response = await api.get('/projects');
+                setProjects(response.data);
             } catch (error) {
                 setErrors(error.response.data);
             }
         };
 
-        fetchEducations();
+        fetchProjects();
     }, []);
 
     const handleEdit = (id) => {
-        navigate(`/educations/${id}`);
+        navigate(`/projects/${id}`);
     };
 
     const handleDelete = async (id) => {
         try {
-            await api.delete(`/educations/${id}`);
-            setEducations(educations.filter(education => education._id !== id));
+            await api.delete(`/projects/${id}`);
+            setProjects((prevProjects) => prevProjects.filter((project) => project._id !== id));
         } catch (error) {
             setErrors(error.response.data);
         }
     };
 
     const columns = {
-        institution: 'Institution',
-        educationLevel: 'Education Level',
-        degree: 'Degree',
-        department: 'Department',
-        specialization: 'Specialization',
-        location: 'Location'
+        title: 'Title',
+        url: 'URL',
+        description: 'Description'
     };
 
     return (
         <BaseList
-            title="Education"
-            createLink="/educations/new"
+            title="Projects"
+            createLink="/projects/new"
             columns={columns}
-            rows={educations}
+            rows={projects}
             handleEdit={handleEdit}
             handleDelete={handleDelete}
         />
     );
 };
 
-export default EducationList;
+export default ProjectList;

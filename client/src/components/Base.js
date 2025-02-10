@@ -11,17 +11,45 @@ const Base = ({ children }) => {
         <ThemeProvider theme={theme}>
             <AppBar position="static">
                 <Toolbar>
-                    <Grid container spacing={2} alignItems="center" justifyContent="space-between">
+                    <Grid container alignItems="center">
                         <Grid item>
-                            <Button component={Link} to="/" startIcon={<img src="/images/logo.png" alt="Logo" width="50" height="50" />} variant="h6">
-                                Smart Resume
+                            <Button component={Link} to="/" startIcon={<img src="/images/logo.png" alt="Logo" width="50" height="50" />} variant="h6" sx={{ color: 'white' }}>
+                                Home
                             </Button>
+                        </Grid>
+                        <Grid item>
+                            <DropMenu
+                                title="Experience"
+                                url="/work-experiences"
+                                nameKeys={['position', 'company']}
+                            />
                         </Grid>
                         <Grid item>
                             <DropMenu
                                 title="Education"
                                 url="/educations"
                                 nameKeys={['educationLevel', 'degree']}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <DropMenu
+                                title="Skills"
+                                url="/skills"
+                                nameKeys={['title']}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <DropMenu
+                                title="Projects"
+                                url="/projects"
+                                nameKeys={['title']}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <DropMenu
+                                title="Links"
+                                url="/links"
+                                nameKeys={['type']}
                             />
                         </Grid>
                     </Grid>

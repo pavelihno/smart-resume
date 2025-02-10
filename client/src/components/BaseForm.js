@@ -17,14 +17,16 @@ const BaseForm = ({ title, formFields, onSubmit, handleDelete, submitButton, isS
                                 <Grid container spacing={2}>
                                     {formFields}
                                     <Grid item xs={12}>
-                                        <Button type="submit" variant="contained" color="primary">
-                                            {submitButton}
-                                        </Button>
-                                        {submitButton === 'Update' && (
-                                            <Button variant="contained" color="secondary" onClick={handleDelete}>
-                                                Delete
+                                        <Box display="flex" gap={2}>
+                                            <Button type="submit" variant="contained" color="primary">
+                                                {submitButton}
                                             </Button>
-                                        )}
+                                            {submitButton === 'Update' && (
+                                                <Button variant="contained" color="secondary" onClick={handleDelete}>
+                                                    Delete
+                                                </Button>
+                                            )}
+                                        </Box>
                                     </Grid>
                                     {isSuccess && (
                                         <Grid item xs={12}>

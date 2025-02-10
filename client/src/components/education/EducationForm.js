@@ -111,9 +111,6 @@ const EducationForm = ({ education, handleSubmit, handleDelete, isSuccess, succe
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="body1" gutterBottom>
-                        Start Date
-                    </Typography>
                     <DatePicker
                         required
                         selected={formData.startDate}
@@ -125,9 +122,6 @@ const EducationForm = ({ education, handleSubmit, handleDelete, isSuccess, succe
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="body1" gutterBottom>
-                        End Date
-                    </Typography>
                     <DatePicker
                         selected={formData.endDate}
                         onChange={(date) => handleDateChange('endDate', date)}

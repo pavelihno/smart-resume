@@ -4,56 +4,54 @@ import { useNavigate } from 'react-router-dom';
 import BaseList from '../BaseList';
 import { api } from '../../api';
 
-const EducationList = () => {
+const WorkExperienceList = () => {
     const navigate = useNavigate();
-    const [educations, setEducations] = useState([]);
+    const [workExperiences, setWorkExperiences] = useState([]);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        const fetchEducations = async () => {
+        const fetchWorkExperiences = async () => {
             try {
-                const response = await api.get('/educations');
-                setEducations(response.data);
+                const response = await api.get('/work-experiences');
+                setWorkExperiences(response.data);
             } catch (error) {
                 setErrors(error.response.data);
             }
         };
 
-        fetchEducations();
+        fetchWorkExperiences();
     }, []);
 
     const handleEdit = (id) => {
-        navigate(`/educations/${id}`);
+        navigate(`/work-experiences/${id}`);
     };
 
     const handleDelete = async (id) => {
         try {
-            await api.delete(`/educations/${id}`);
-            setEducations(educations.filter(education => education._id !== id));
+            await api.delete(`/work-experiences/${id}`);
+            setWorkExperiences((prevWorkExperiences) => prevWorkExperiences.filter((workExperience) => workExperience._id !== id));
         } catch (error) {
             setErrors(error.response.data);
         }
     };
 
     const columns = {
-        institution: 'Institution',
-        educationLevel: 'Education Level',
-        degree: 'Degree',
-        department: 'Department',
-        specialization: 'Specialization',
+        position: 'Position',
+        company: 'Company',
+        domain: 'Domain',
         location: 'Location'
     };
 
     return (
         <BaseList
-            title="Education"
-            createLink="/educations/new"
+            title="Work Experience"
+            createLink="/work-experiences/new"
             columns={columns}
-            rows={educations}
+            rows={workExperiences}
             handleEdit={handleEdit}
             handleDelete={handleDelete}
         />
     );
 };
 
-export default EducationList;
+export default WorkExperienceList;

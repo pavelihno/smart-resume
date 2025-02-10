@@ -1,33 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
-import EducationForm from './EducationForm';
+import LinkForm from './LinkForm';
 import { api } from '../../api';
 
-const UpdateEducationForm = () => {
+const UpdateLinkForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [education, setEducation] = useState(null);
+    const [link, setLink] = useState(null);
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        const fetchEducation = async () => {
+        const fetchLink = async () => {
             try {
-                const response = await api.get(`/educations/${id}`);
-                setEducation(response.data);
+                const response = await api.get(`/links/${id}`);
+                setLink(response.data);
             } catch (error) {
                 setErrors(error.response.data);
             }
         };
 
-        fetchEducation();
+        fetchLink();
     }, [id]);
 
     const handleSubmit = async (formData) => {
         setErrors({});
         try {
-            await api.put(`/educations/${id}`, formData);
+            await api.put(`/links/${id}`, formData);
             setUpdateSuccess(true);
         } catch (error) {
             setErrors(error.response.data);
@@ -37,24 +36,24 @@ const UpdateEducationForm = () => {
     const handleDelete = async () => {
         setErrors({});
         try {
-            await api.delete(`/educations/${id}`);
-            navigate('/educations');
+            await api.delete(`/links/${id}`);
+            navigate('/links');
         } catch (error) {
             setErrors(error.response.data);
         }
     };
 
     return (
-        <EducationForm
-            education={education}
+        <LinkForm
+            link={link}
             handleSubmit={handleSubmit}
             handleDelete={handleDelete}
             isSuccess={updateSuccess}
-            successMessage="Education updated successfully!"
+            successMessage="Link updated successfully!"
             submitButton="Update"
             errors={errors}
         />
     );
 };
 
-export default UpdateEducationForm;
+export default UpdateLinkForm;

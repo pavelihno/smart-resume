@@ -1,59 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import BaseList from '../BaseList';
 import { api } from '../../api';
 
-const EducationList = () => {
+const LinkList = () => {
     const navigate = useNavigate();
-    const [educations, setEducations] = useState([]);
+    const [links, setLinks] = useState([]);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        const fetchEducations = async () => {
+        const fetchLinks = async () => {
             try {
-                const response = await api.get('/educations');
-                setEducations(response.data);
+                const response = await api.get('/links');
+                setLinks(response.data);
             } catch (error) {
                 setErrors(error.response.data);
             }
         };
 
-        fetchEducations();
+        fetchLinks();
     }, []);
 
     const handleEdit = (id) => {
-        navigate(`/educations/${id}`);
+        navigate(`/links/${id}`);
     };
 
     const handleDelete = async (id) => {
         try {
-            await api.delete(`/educations/${id}`);
-            setEducations(educations.filter(education => education._id !== id));
+            await api.delete(`/links/${id}`);
+            setLinks((prevLinks) => prevLinks.filter((link) => link._id !== id));
         } catch (error) {
             setErrors(error.response.data);
         }
     };
 
     const columns = {
-        institution: 'Institution',
-        educationLevel: 'Education Level',
-        degree: 'Degree',
-        department: 'Department',
-        specialization: 'Specialization',
-        location: 'Location'
+        type: 'Type',
+        url: 'URL'
     };
 
     return (
         <BaseList
-            title="Education"
-            createLink="/educations/new"
+            title="Links"
+            createLink="/links/new"
             columns={columns}
-            rows={educations}
+            rows={links}
             handleEdit={handleEdit}
             handleDelete={handleDelete}
         />
     );
 };
 
-export default EducationList;
+export default LinkList;

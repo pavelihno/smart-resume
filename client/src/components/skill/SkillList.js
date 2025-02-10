@@ -4,56 +4,52 @@ import { useNavigate } from 'react-router-dom';
 import BaseList from '../BaseList';
 import { api } from '../../api';
 
-const EducationList = () => {
+const SkillList = () => {
     const navigate = useNavigate();
-    const [educations, setEducations] = useState([]);
+    const [skills, setSkills] = useState([]);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        const fetchEducations = async () => {
+        const fetchSkills = async () => {
             try {
-                const response = await api.get('/educations');
-                setEducations(response.data);
+                const response = await api.get('/skills');
+                setSkills(response.data);
             } catch (error) {
                 setErrors(error.response.data);
             }
         };
 
-        fetchEducations();
+        fetchSkills();
     }, []);
 
     const handleEdit = (id) => {
-        navigate(`/educations/${id}`);
+        navigate(`/skills/${id}`);
     };
 
     const handleDelete = async (id) => {
         try {
-            await api.delete(`/educations/${id}`);
-            setEducations(educations.filter(education => education._id !== id));
+            await api.delete(`/skills/${id}`);
+            setSkills((prevSkills) => prevSkills.filter((skill) => skill._id !== id));
         } catch (error) {
             setErrors(error.response.data);
         }
     };
 
     const columns = {
-        institution: 'Institution',
-        educationLevel: 'Education Level',
-        degree: 'Degree',
-        department: 'Department',
-        specialization: 'Specialization',
-        location: 'Location'
+        title: 'Title',
+        details: 'Details'
     };
 
     return (
         <BaseList
-            title="Education"
-            createLink="/educations/new"
+            title="Skills"
+            createLink="/skills/new"
             columns={columns}
-            rows={educations}
+            rows={skills}
             handleEdit={handleEdit}
             handleDelete={handleDelete}
         />
     );
 };
 
-export default EducationList;
+export default SkillList;
