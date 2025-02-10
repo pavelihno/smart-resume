@@ -1,17 +1,18 @@
-import React from 'react';
-import Typography from '@mui/material/Typography';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+
+import Base from './Base';
 
 const Home = () => {
     return (
-        <Box>
-            <Typography variant="h4" gutterBottom>
-                Welcome to Smart Resume!
-            </Typography>
-            <Typography variant="body1">
-                This is a basic template for the future development of your resume editor.
-            </Typography>
-        </Box>
+        <Base>
+            <Box>
+                <Typography variant="h4" gutterBottom>
+                    Welcome to Smart Resume!
+                </Typography>
+            </Box>
+        </Base>
     );
 };
 
