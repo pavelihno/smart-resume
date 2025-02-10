@@ -1,11 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { registerLocale } from 'react-datepicker';
+import { enGB } from 'date-fns/locale/en-GB';
 
 import Home from './components/Home';
 // import ProfileList from './components/profile/ProfileList';
 // import CreateProfileForm from './components/profile/CreateProfileForm';
 // import UpdateProfileForm from './components/profile/UpdateProfileForm';
-// // import EducationList from './components/education/EducationList';
+import EducationList from './components/education/EducationList';
 import CreateEducationForm from './components/education/CreateEducationForm';
 import UpdateEducationForm from './components/education/UpdateEducationForm';
 // // import LinkList from './components/link/LinkList';
@@ -21,6 +23,9 @@ import UpdateEducationForm from './components/education/UpdateEducationForm';
 // import CreateWorkExperienceForm from './components/CreateWorkExperienceForm';
 // import UpdateWorkExperienceForm from './components/UpdateWorkExperienceForm';
 
+// Week starts on Monday
+registerLocale('en-GB', enGB);
+
 function App() {
     return (
         <Routes>
@@ -30,7 +35,11 @@ function App() {
             {/* <Route path="/profiles/new" element={<CreateProfileForm />} /> */}
             {/* <Route path="/profiles/:id" element={<UpdateProfileForm />} /> */}
 
-            {/* <Route path="/educations" element={<EducationList />} /> */}
+            {/* <Route path="/work-experiences" element={<WorkExperienceList />} /> */}
+            {/* <Route path="/work-experiences/new" element={<CreateWorkExperienceForm />} /> */}
+            {/* <Route path="/work-experiences/:id" element={<UpdateWorkExperienceForm />} /> */}
+
+            <Route path="/educations" element={<EducationList />} />
             <Route path="/educations/new" element={<CreateEducationForm />} />
             <Route path="/educations/:id" element={<UpdateEducationForm />} />
 
@@ -45,10 +54,6 @@ function App() {
             {/* <Route path="/projects" element={<ProjectList />} /> */}
             {/* <Route path="/projects/new" element={<CreateProjectForm />} /> */}
             {/* <Route path="/projects/:id" element={<UpdateProjectForm />} /> */}
-
-            {/* <Route path="/work-experiences" element={<WorkExperienceList />} /> */}
-            {/* <Route path="/work-experiences/new" element={<CreateWorkExperienceForm />} /> */}
-            {/* <Route path="/work-experiences/:id" element={<UpdateWorkExperienceForm />} /> */}
         </Routes>
     );
 }

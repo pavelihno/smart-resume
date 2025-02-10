@@ -12,9 +12,9 @@ const CreateEducationForm = () => {
     const handleSubmit = async (formData) => {
         setErrors({});
         try {
-            await api.post('/api/educations', formData);
+            await api.post('/educations', formData);
             setCreateSuccess(true);
-            navigate('/');
+            navigate('/educations');
         } catch (error) {
             setErrors(error.response.data);
         }
@@ -22,10 +22,11 @@ const CreateEducationForm = () => {
 
     return (
         <EducationForm
-            onSubmit={handleSubmit}
+            handleSubmit={handleSubmit}
             isSuccess={createSuccess}
             successMessage="Education created successfully!"
             submitButton="Create"
+            errors={errors}
         />
     );
 };

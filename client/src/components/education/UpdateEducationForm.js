@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import EducationForm from './EducationForm';
-import api from '../../api';
+import { api } from '../../api';
 
 const UpdateEducationForm = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [education, setEducation] = useState(null);
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const [errors, setErrors] = useState({});
@@ -12,7 +13,7 @@ const UpdateEducationForm = () => {
     useEffect(() => {
         const fetchEducation = async () => {
             try {
-                const response = await axios.get(`/api/educations/${id}`);
+                const response = await api.get(`/educations/${id}`);
                 setEducation(response.data);
             } catch (error) {
                 setErrors(error.response.data);
@@ -25,8 +26,18 @@ const UpdateEducationForm = () => {
     const handleSubmit = async (formData) => {
         setErrors({});
         try {
-            await axios.put(`/api/educations/${id}`, formData);
+            await api.put(`/educations/${id}`, formData);
             setUpdateSuccess(true);
+        } catch (error) {
+            setErrors(error.response.data);
+        }
+    };
+
+    const handleDelete = async () => {
+        setErrors({});
+        try {
+            await api.delete(`/educations/${id}`);
+            navigate('/educations');
         } catch (error) {
             setErrors(error.response.data);
         }
@@ -35,10 +46,12 @@ const UpdateEducationForm = () => {
     return (
         <EducationForm
             education={education}
-            onSubmit={handleSubmit}
+            handleSubmit={handleSubmit}
+            handleDelete={handleDelete}
             isSuccess={updateSuccess}
             successMessage="Education updated successfully!"
             submitButton="Update"
+            errors={errors}
         />
     );
 };
