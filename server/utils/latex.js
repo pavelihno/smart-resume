@@ -30,15 +30,17 @@ export const escapeLatex = (text) => {
         .replace(/'/g, '\\textquotesingle{}');
 };
 
-export const escapeProfileData = (data) => {
+const escapeProfileData = (data) => {
     if (typeof data === 'string') {
         return escapeLatex(data);
+    } else if (data instanceof Date) {
+        return data.toLocaleString('default', { month: 'short', year: 'numeric' });
     } else if (Array.isArray(data)) {
         return data.map(escapeProfileData);
     } else if (typeof data === 'object' && data !== null) {
         const escapedData = {};
         for (const key in data) {
-            if (Object.prototype.hasOwnProperty.call(data, key)) {
+            if (data.hasOwnProperty(key)) {
                 escapedData[key] = escapeProfileData(data[key]);
             }
         }
@@ -48,10 +50,11 @@ export const escapeProfileData = (data) => {
     }
 };
 
-export const generatePDF = async (data) => {
+export const generatePDF = async (data, templateName=DEFAULT_TEMPLATE_NAME) => {
     // Read LaTeX template
-    const templateContent = fs.readFileSync(TEMPLATE_FOLDER_PATH + DEFAULT_TEMPLATE_NAME + '.tex', 'utf8');
-    
+    const templatePath = path.join(TEMPLATE_FOLDER_PATH, `${templateName}.tex`);
+    const templateContent = fs.readFileSync(templatePath, 'utf8');
+
     // Escape profile data
     const escapedData = escapeProfileData(data);
 

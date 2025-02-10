@@ -1,8 +1,9 @@
-FROM node:17-alpine
+FROM node:20-alpine
 
 RUN apk add --no-cache \
     texlive \
-    font-noto
+    texmf-dist-latexextra \
+    texmf-dist-fontsextra
 
 WORKDIR /app
 
