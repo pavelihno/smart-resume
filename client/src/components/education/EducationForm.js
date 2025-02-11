@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Typography, TextField } from '@mui/material';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
 import BaseForm from '../BaseForm';
+import TextFieldInput from '../../formFields/TextFieldInput';
+import DatePickerField from '../../formFields/DatePickerField';
 
 const EducationForm = ({ education, handleSubmit, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
     const [formData, setFormData] = useState({
@@ -49,89 +48,63 @@ const EducationForm = ({ education, handleSubmit, handleDelete, isSuccess, succe
     return (
         <BaseForm
             title={'Education'}
-            formFields={<>
-                <Grid item xs={12}>
-                    <TextField
-                        required
-                        fullWidth
+            formFields={
+                <>
+                    <TextFieldInput
                         label="Institution"
                         name="institution"
                         value={formData.institution}
                         onChange={handleChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
                         required
-                        fullWidth
+                    />
+                    <TextFieldInput
                         label="Education Level"
                         name="educationLevel"
                         value={formData.educationLevel}
                         onChange={handleChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
                         required
-                        fullWidth
+                    />
+                    <TextFieldInput
                         label="Degree"
                         name="degree"
                         value={formData.degree}
                         onChange={handleChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
                         required
-                        fullWidth
+                    />
+                    <TextFieldInput
                         label="Department"
                         name="department"
                         value={formData.department}
                         onChange={handleChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
                         required
-                        fullWidth
+                    />
+                    <TextFieldInput
                         label="Specialization"
                         name="specialization"
                         value={formData.specialization}
                         onChange={handleChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
                         required
-                        fullWidth
+                    />
+                    <TextFieldInput
                         label="Location"
                         name="location"
                         value={formData.location}
                         onChange={handleChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <DatePicker
                         required
-                        selected={formData.startDate}
+                    />
+                    <DatePickerField 
+                        label="Start Date"
+                        value={formData.startDate}
                         onChange={(date) => handleDateChange('startDate', date)}
-                        dateFormat="dd.MM.yyyy"
-                        placeholderText="Start Date"
-                        customInput={<TextField fullWidth required />}
-                        locale="en-GB"
+                        required
                     />
-                </Grid>
-                <Grid item xs={12}>
-                    <DatePicker
-                        selected={formData.endDate}
+                    <DatePickerField 
+                        label="End Date"
+                        value={formData.endDate}
                         onChange={(date) => handleDateChange('endDate', date)}
-                        dateFormat="dd.MM.yyyy"
-                        placeholderText="End Date"
-                        customInput={<TextField fullWidth />}
-                        locale="en-GB"
                     />
-                </Grid>
-            </>}
+                </>
+            }
             onSubmit={onSubmit}
             handleDelete={handleDelete}
             submitButton={submitButton}

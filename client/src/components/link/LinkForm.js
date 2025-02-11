@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField } from '@mui/material';
 
 import BaseForm from '../BaseForm';
+import TextFieldInput from '../../formFields/TextFieldInput';
 
 const LinkForm = ({ link, handleSubmit, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
     const [formData, setFormData] = useState({
@@ -33,26 +33,20 @@ const LinkForm = ({ link, handleSubmit, handleDelete, isSuccess, successMessage,
             title="Link"
             formFields={
                 <>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            label="Type"
-                            name="type"
-                            value={formData.type}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            label="URL"
-                            name="url"
-                            value={formData.url}
-                            onChange={handleChange}
-                        />
-                    </Grid>
+                    <TextFieldInput
+                        label="Type"
+                        name="type"
+                        value={formData.type}
+                        onChange={handleChange}
+                        required
+                    />
+                    <TextFieldInput
+                        label="URL"
+                        name="url"
+                        value={formData.url}
+                        onChange={handleChange}
+                        required
+                    />
                 </>
             }
             onSubmit={onSubmit}

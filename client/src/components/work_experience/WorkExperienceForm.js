@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Typography, TextField, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
 import BaseForm from '../BaseForm';
+import TextFieldInput from '../../formFields/TextFieldInput';
+import BulletedListField from '../../formFields/BulletedListField';
+import DatePickerField from '../../formFields/DatePickerField';
 
 const WorkExperienceForm = ({ workExperience, handleSubmit, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
     const [formData, setFormData] = useState({
@@ -50,103 +49,51 @@ const WorkExperienceForm = ({ workExperience, handleSubmit, handleDelete, isSucc
             title="Work Experience"
             formFields={
                 <>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            label="Position"
-                            name="position"
-                            value={formData.position}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            label="Company"
-                            name="company"
-                            value={formData.company}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Domain"
-                            name="domain"
-                            value={formData.domain}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Responsibilities (Press Enter to add)"
-                            name="newResponsibility"
-                            value={formData.newResponsibility || ''}
-                            onChange={(e) => setFormData((prevData) => ({ ...prevData, newResponsibility: e.target.value }))}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    setFormData((prevData) => ({
-                                        ...prevData,
-                                        responsibilities: [...prevData.responsibilities, prevData.newResponsibility],
-                                        newResponsibility: ''
-                                    }));
-                                }
-                            }}
-                        />
-                        <ul style={{ listStyleType: 'none', padding: 0 }}>
-                            {formData.responsibilities.map((responsibility, index) => (
-                                <li key={index} style={{ display: 'flex', alignItems: 'center' }}>
-                                    <IconButton
-                                        aria-label="delete"
-                                        onClick={() => {
-                                            setFormData((prevData) => ({
-                                                ...prevData,
-                                                responsibilities: prevData.responsibilities.filter((_, i) => i !== index)
-                                            }));
-                                        }}
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                    <Typography variant="body2">{responsibility}</Typography>
-                                </li>
-                            ))}
-                        </ul>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            label="Location"
-                            name="location"
-                            value={formData.location}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <DatePicker
-                            required
-                            selected={formData.startDate}
-                            onChange={(date) => handleDateChange('startDate', date)}
-                            dateFormat="dd.MM.yyyy"
-                            placeholderText="Start Date"
-                            customInput={<TextField fullWidth required />}
-                            locale="en-GB"
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <DatePicker
-                            selected={formData.endDate}
-                            onChange={(date) => handleDateChange('endDate', date)}
-                            dateFormat="dd.MM.yyyy"
-                            placeholderText="End Date"
-                            customInput={<TextField fullWidth />}
-                            locale="en-GB"
-                        />
-                    </Grid>
+                    <TextFieldInput
+                        required
+                        label="Position"
+                        name="position"
+                        value={formData.position}
+                        onChange={handleChange}
+                    />
+                    <TextFieldInput
+                        required
+                        label="Company"
+                        name="company"
+                        value={formData.company}
+                        onChange={handleChange}
+                    />
+                    <TextFieldInput
+                        label="Domain"
+                        name="domain"
+                        value={formData.domain}
+                        onChange={handleChange}
+                    />
+                    <BulletedListField
+                        formData={formData}
+                        setFormData={setFormData}
+                        label="Responsibilities"
+                        itemsKey="responsibilities"
+                        newItemKey="newResponsibility"
+                    />
+                    <TextFieldInput
+                        required
+                        label="Location"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                    />
+                    <DatePickerField
+                        required
+                        label="Start Date"
+                        value={formData.startDate}
+                        onChange={(date) => handleDateChange('startDate', date)}
+                    />
+                    <DatePickerField
+                        label="End Date"
+                        value={formData.endDate}
+                        onChange={(date) => handleDateChange('endDate', date)}
+                    />
                 </>
             }
             onSubmit={onSubmit}

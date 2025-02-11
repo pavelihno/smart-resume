@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, IconButton, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import BaseForm from '../BaseForm';
+import TextFieldInput from '../../formFields/TextFieldInput';
+import BulletedListField from '../../formFields/BulletedListField';
 
 const SkillForm = ({ skill, handleSubmit, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
     const [formData, setFormData] = useState({
@@ -34,53 +34,22 @@ const SkillForm = ({ skill, handleSubmit, handleDelete, isSuccess, successMessag
             title="Skill"
             formFields={
                 <>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            label="Title"
-                            name="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Details (Press Enter to add)"
-                            name="newDetail"
-                            value={formData.newDetail || ''}
-                            onChange={(e) => setFormData((prevData) => ({ ...prevData, newDetail: e.target.value }))}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    setFormData((prevData) => ({
-                                        ...prevData,
-                                        details: [...prevData.details, prevData.newDetail],
-                                        newDetail: ''
-                                    }));
-                                }
-                            }}
-                        />
-                        <ul style={{ listStyleType: 'none', padding: 0 }}>
-                            {formData.details.map((detail, index) => (
-                                <li key={index} style={{ display: 'flex', alignItems: 'center' }}>
-                                    <IconButton
-                                        aria-label="delete"
-                                        onClick={() => {
-                                            setFormData((prevData) => ({
-                                                ...prevData,
-                                                details: prevData.details.filter((_, i) => i !== index)
-                                            }));
-                                        }}
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                    <Typography variant="body2">{detail}</Typography>
-                                </li>
-                            ))}
-                        </ul>
-                    </Grid>
+                    <TextFieldInput
+                        required
+                        fullWidth
+                        label="Title"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                    />
+                    <BulletedListField
+                        formData={formData}
+                        setFormData={setFormData}
+                        label="Details"
+                        itemsKey="details"
+                        newItemKey="newDetail"
+                        renderItem={(detail) => detail}
+                    />
                 </>
             }
             onSubmit={onSubmit}
