@@ -19,6 +19,13 @@ const Base = ({ children }) => {
                         </Grid>
                         <Grid item>
                             <DropMenu
+                                title="Profiles"
+                                url="/profiles"
+                                nameKeys={['title']}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <DropMenu
                                 title="Experience"
                                 url="/work-experiences"
                                 nameKeys={['position', 'company']}

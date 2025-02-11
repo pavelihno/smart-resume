@@ -71,8 +71,12 @@ export const generatePDF = async (data, templateName=DEFAULT_TEMPLATE_NAME) => {
     return new Promise((resolve, reject) => {
         const pdfStream = latex(latexContent);
         pdfStream.pipe(outputStream);
-    
+
         pdfStream.on('error', (err) => {
+            reject(err);
+        });
+
+        outputStream.on('error', (err) => {
             reject(err);
         });
 

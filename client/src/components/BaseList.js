@@ -1,12 +1,13 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Container, Paper, IconButton, Typography, ListItemButton, ListItemText } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Container, Paper, IconButton, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Base from './Base';
 import AddIcon from '@mui/icons-material/Add';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
-const BaseList = ({ title, columns, rows, handleEdit, handleDelete, createLink }) => {
+const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, createLink }) => {
     return (
         <Base>
             <Container component="main" maxWidth="lg">
@@ -42,6 +43,11 @@ const BaseList = ({ title, columns, rows, handleEdit, handleDelete, createLink }
                                             <IconButton onClick={() => handleDelete(row._id)} color="secondary">
                                                 <DeleteIcon />
                                             </IconButton>
+                                            {handleCopy && (
+                                                <IconButton onClick={() => handleCopy(row._id)} color="default">
+                                                    <ContentCopyIcon />
+                                                </IconButton>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}

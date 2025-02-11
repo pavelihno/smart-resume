@@ -4,9 +4,9 @@ import { registerLocale } from 'react-datepicker';
 import { enGB } from 'date-fns/locale/en-GB';
 
 import Home from './components/Home';
-// import ProfileList from './components/profile/ProfileList';
-// import CreateProfileForm from './components/profile/CreateProfileForm';
-// import UpdateProfileForm from './components/profile/UpdateProfileForm';
+import ProfileList from './components/profile/ProfileList';
+import CreateProfileForm from './components/profile/CreateProfileForm';
+import UpdateProfileForm from './components/profile/UpdateProfileForm';
 import WorkExperienceList from './components/work_experience/WorkExperienceList';
 import CreateWorkExperienceForm from './components/work_experience/CreateWorkExperienceForm';
 import UpdateWorkExperienceForm from './components/work_experience/UpdateWorkExperienceForm';
@@ -31,9 +31,9 @@ function App() {
         <Routes>
             <Route path="/" element={<Home />} />
 
-            {/* <Route path="/profiles" element={<ProfileList />} /> */}
-            {/* <Route path="/profiles/new" element={<CreateProfileForm />} /> */}
-            {/* <Route path="/profiles/:id" element={<UpdateProfileForm />} /> */}
+            <Route path="/profiles" element={<ProfileList />} />
+            <Route path="/profiles/new" element={<CreateProfileForm />} />
+            <Route path="/profiles/:id" element={<UpdateProfileForm />} />
 
             <Route path="/work-experiences" element={<WorkExperienceList />} />
             <Route path="/work-experiences/new" element={<CreateWorkExperienceForm />} />

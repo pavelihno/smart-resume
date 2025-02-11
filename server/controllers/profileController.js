@@ -9,6 +9,21 @@ const FILE_TYPE = {
     TEX: 'tex'
 };
 
+const createProfileSkill = async (profileId, skillData) => {
+    const { id: skillId, order } = skillData;
+    const skill = await Skill.findById(skillId);
+    if (!skill) {
+        throw new Error(`Skill with id ${skillId} not found`);
+    }
+    const profileSkill = new ProfileSkill({
+        profile: profileId,
+        skill: skill._id,
+        order: order
+    });
+    await profileSkill.save();
+    return profileSkill._id;
+};
+
 export const createProfile = async (req, res) => {
     try {
         const { skills, ...profileData } = req.body;
@@ -19,27 +34,45 @@ export const createProfile = async (req, res) => {
 
         // Add skills to profile
         if (skills && skills.length > 0) {
-            for (const skillData of skills) {
-                const { id: skillId, order } = skillData;
-                const skill = await Skill.findById(skillId);
-                if (!skill) {
-                    throw new Error(`Skill with id ${skillId} not found`);
-                }
-                const profileSkill = new ProfileSkill({
-                    profile: profile._id,
-                    skill: skill._id,
-                    order: order
-                });
-                await profileSkill.save();
-                profile.skills.push(profileSkill._id);
+            for (const [i, id] of skills.entries()) {
+                const profileSkillId = await createProfileSkill(profile._id, { id: id, order: i+1 });
+                profile.skills.push(profileSkillId);
             }
+            await profile.save();
         }
-
-        await profile.save();
 
         res.status(201).json(profile);
     } catch (error) {
         return badRequestError(res, error.message);
+    }
+};
+
+export const copyProfile = async (req, res) => {
+    try {
+        const originalProfile = await Profile.findById(req.params.id).populate('workExperiences educations skills projects links');
+        if (!originalProfile) {
+            return notFoundError(res, 'Profile not found');
+        }
+
+        const newProfileData = originalProfile.toObject();
+        newProfileData.title = `${newProfileData.title} (Copy)`;
+        delete newProfileData._id;
+        delete newProfileData.skills;
+
+        const newProfile = new Profile(newProfileData);
+        await newProfile.save();
+
+        for (const profileSkill of originalProfile.skills) {
+            const profileSkillId = await createProfileSkill(
+                newProfile._id, {id: profileSkill.skill._id, order: profileSkill.order}
+            );
+            newProfile.skills.push(profileSkillId);
+        }
+        await newProfile.save();
+
+        res.status(201).json(newProfile);
+    } catch (error) {
+        return internalServerError(res, error.message);
     }
 };
 
@@ -66,10 +99,29 @@ export const getProfileById = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        const profile = await Profile.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const profile = await Profile.findById(req.params.id);
         if (!profile) {
             return notFoundError(res, 'Profile not found');
         }
+        const { skills, ...profileData } = req.body;
+
+        // Update profile data
+        Object.assign(profile, profileData);
+
+        // Update skills if provided
+        if (skills && skills.length > 0) {
+
+            // Delete existing profile skills
+            await ProfileSkill.deleteMany({ profile: profile._id });
+
+            profile.skills = [];
+            for (const [i, id] of skills.entries()) {
+                const profileSkillId = await createProfileSkill(profile._id, { id: id, order: i + 1 });
+                profile.skills.push(profileSkillId);
+            }
+        }
+
+        await profile.save();
         res.status(200).json(profile);
     } catch (error) {
         return badRequestError(res, error.message);
@@ -78,10 +130,15 @@ export const updateProfile = async (req, res) => {
 
 export const deleteProfile = async (req, res) => {
     try {
-        const profile = await Profile.findByIdAndDelete(req.params.id);
+        const profileId = req.params.id
+        const profile = await Profile.findByIdAndDelete(profileId);
         if (!profile) {
             return notFoundError(res, 'Profile not found');
         }
+
+        // Delete associated profile skills
+        await ProfileSkill.deleteMany({ profile: profileId });
+
         res.status(200).json({ message: 'Profile deleted successfully' });
     } catch (error) {
         return internalServerError(res, error.message);
@@ -97,13 +154,6 @@ const getSortedProfile = async (profileId) => {
                 path: 'skill'
             }
         });
-    if (!profile) {
-        throw new Error('Profile not found');
-    }
-
-    if (!profile.workExperiences.length || !profile.educations.length || !profile.skills.length || !profile.projects.length || !profile.links.length) {
-        throw new Error('Profile fields cannot be empty');
-    }
 
     const sortedProfile = profile.toObject();
     sortedProfile.workExperiences.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
@@ -116,8 +166,18 @@ const getSortedProfile = async (profileId) => {
 
 const generateProfileFile = async (req, res, type) => {
     try {
-        const sortedProfile = await getSortedProfile(req.params.id);
-        const documentPaths = await generatePDF(sortedProfile);
+        const profileId = req.params.id;
+        const profile = await Profile.findById(profileId)
+        if (!profile) {
+            return notFoundError(res, 'Profile not found');
+        }
+        if (!profile.workExperiences.length || !profile.educations.length || !profile.skills.length || !profile.projects.length || !profile.links.length) {
+            return badRequestError('Profile fields cannot be empty');
+        }
+
+        const sortedProfile = await getSortedProfile(profileId);
+
+        const documentPaths = await generatePDF(sortedProfile, req.query.template);
 
         const filePath = type === FILE_TYPE.PDF ? documentPaths.pdfPath : documentPaths.texPath;
 
@@ -128,9 +188,6 @@ const generateProfileFile = async (req, res, type) => {
             }
         });
     } catch (error) {
-        if (error.message === 'Profile not found') {
-            return notFoundError(res, error.message);
-        }
         return internalServerError(res, error.message);
     }
 };

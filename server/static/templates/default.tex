@@ -101,8 +101,8 @@
 
 \begin{center}
     \textbf{\Huge\scshape {{name}} } \\ \vspace{1pt}
-    {{#each phoneNumbers}} \small{\href{tel:{{this}} }{\underline{ {{this}} }}} $|$ {{/each}}
-    {{#each emails}} \small{\href{mailto:{{this}} }{\underline{ {{this}} }}} $|$ {{/each}}
+    {{#each phoneNumbers}} \small{\underline{ {{this}} }} $|${{/each}}
+    {{#each emails}}\small{\underline{ {{this}} }}$|${{/each}}
     {{#each links}} \small{\href{ {{this.url}} }{\underline{ {{this.type}} }}}{{#unless @last}} $|$ {{/unless}}{{/each}}
 \end{center}
 
