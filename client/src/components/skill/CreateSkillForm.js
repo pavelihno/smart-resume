@@ -1,34 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
-import { api } from '../../api';
+import BaseCreateForm from '../BaseCreateForm';
 import SkillForm from './SkillForm';
 
-const CreateSkillForm = () => {
-    const navigate = useNavigate();
-    const [createSuccess, setCreateSuccess] = useState(false);
-    const [errors, setErrors] = useState({});
-
-    const handleSubmit = async (formData) => {
-        setErrors({});
-        try {
-            await api.post('/skills', formData);
-            setCreateSuccess(true);
-            navigate('/skills');
-        } catch (error) {
-            setErrors(error.response.data);
-        }
-    };
-
-    return (
-        <SkillForm
-            handleSubmit={handleSubmit}
-            isSuccess={createSuccess}
-            successMessage="Skill created successfully!"
-            submitButton="Create"
-            errors={errors}
-        />
-    );
-};
+const CreateSkillForm = () => (
+    <BaseCreateForm
+        formComponent={SkillForm}
+        endpoint="/skills"
+        redirectRoute="/skills"
+        successMessage="Skill created successfully!"
+        submitButton="Create"
+    />
+);
 
 export default CreateSkillForm;

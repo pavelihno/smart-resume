@@ -1,34 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
-import { api } from '../../api';
+import BaseCreateForm from '../BaseCreateForm';
 import ProfileForm from './ProfileForm';
 
-const CreateProfileForm = () => {
-    const navigate = useNavigate();
-    const [createSuccess, setCreateSuccess] = useState(false);
-    const [errors, setErrors] = useState({});
-
-    const handleSubmit = async (formData) => {
-        setErrors({});
-        try {
-            await api.post('/profiles', formData);
-            setCreateSuccess(true);
-            navigate('/profiles');
-        } catch (error) {
-            setErrors(error.response.data);
-        }
-    };
-
-    return (
-        <ProfileForm
-            handleSubmit={handleSubmit}
-            isSuccess={createSuccess}
-            successMessage="Profile created successfully!"
-            submitButton="Create"
-            errors={errors}
-        />
-    );
-};
+const CreateProfileForm = () => (
+    <BaseCreateForm
+        formComponent={ProfileForm}
+        endpoint="/profiles"
+        redirectRoute="/profiles"
+        successMessage="Profile created successfully!"
+        submitButton="Create"
+    />
+);
 
 export default CreateProfileForm;

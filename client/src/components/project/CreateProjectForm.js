@@ -1,34 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
-import { api } from '../../api';
+import BaseCreateForm from '../BaseCreateForm';
 import ProjectForm from './ProjectForm';
 
-const CreateProjectForm = () => {
-    const navigate = useNavigate();
-    const [createSuccess, setCreateSuccess] = useState(false);
-    const [errors, setErrors] = useState({});
-
-    const handleSubmit = async (formData) => {
-        setErrors({});
-        try {
-            await api.post('/projects', formData);
-            setCreateSuccess(true);
-            navigate('/projects');
-        } catch (error) {
-            setErrors(error.response.data);
-        }
-    };
-
-    return (
-        <ProjectForm
-            handleSubmit={handleSubmit}
-            isSuccess={createSuccess}
-            successMessage="Project created successfully!"
-            submitButton="Create"
-            errors={errors}
-        />
-    );
-};
+const CreateProjectForm = () => (
+    <BaseCreateForm
+        formComponent={ProjectForm}
+        endpoint="/projects"
+        redirectRoute="/projects"
+        successMessage="Project created successfully!"
+        submitButton="Create"
+    />
+);
 
 export default CreateProjectForm;
