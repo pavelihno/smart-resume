@@ -31,6 +31,6 @@ const ProfileSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project'
     }]
-});
+}, { timestamps: true });
 
 export default mongoose.model('Profile', ProfileSchema);

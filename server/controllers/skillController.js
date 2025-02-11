@@ -13,7 +13,7 @@ export const createSkill = async (req, res) => {
 
 export const getSkills = async (req, res) => {
     try {
-        const skills = await Skill.find();
+        const skills = await Skill.find().sort({ updatedAt: -1 });
         res.status(200).json(skills);
     } catch (error) {
         return internalServerError(res, error.message);

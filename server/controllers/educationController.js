@@ -13,7 +13,7 @@ export const createEducation = async (req, res) => {
 
 export const getEducations = async (req, res) => {
     try {
-        const educations = await Education.find();
+        const educations = await Education.find().sort({ updatedAt: -1 });
         res.status(200).json(educations);
     } catch (error) {
         return internalServerError(res, error.message);

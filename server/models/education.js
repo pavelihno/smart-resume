@@ -30,6 +30,6 @@ const EducationSchema = new mongoose.Schema({
         required: true
     },
     endDate: Date
-});
+}, { timestamps: true });
 
 export default mongoose.model('Education', EducationSchema);

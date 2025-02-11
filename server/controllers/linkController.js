@@ -13,7 +13,7 @@ export const createLink = async (req, res) => {
 
 export const getLinks = async (req, res) => {
     try {
-        const links = await Link.find();
+        const links = await Link.find().sort({ updatedAt: -1 });
         res.status(200).json(links);
     } catch (error) {
         return internalServerError(res, error.message);

@@ -13,7 +13,7 @@ export const createWorkExperience = async (req, res) => {
 
 export const getWorkExperiences = async (req, res) => {
     try {
-        const workExperiences = await WorkExperience.find();
+        const workExperiences = await WorkExperience.find().sort({ updatedAt: -1 });
         res.status(200).json(workExperiences);
     } catch (error) {
         return internalServerError(res, error.message);

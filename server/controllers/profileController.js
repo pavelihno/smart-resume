@@ -57,6 +57,8 @@ export const copyProfile = async (req, res) => {
         const newProfileData = originalProfile.toObject();
         newProfileData.title = `${newProfileData.title} (Copy)`;
         delete newProfileData._id;
+        delete newProfileData.createdAt;
+        delete newProfileData.updatedAt;
         delete newProfileData.skills;
 
         const newProfile = new Profile(newProfileData);
@@ -78,10 +80,10 @@ export const copyProfile = async (req, res) => {
 
 export const getProfiles = async (req, res) => {
     try {
-        const profiles = await Profile.find().populate('workExperiences educations skills projects links');
-        res.status(200).json(profiles);
+        const profiles = await Profile.find().sort({ updatedAt: -1 });
+        res.json(profiles);
     } catch (error) {
-        return internalServerError(res, error.message);
+        res.status(500).json({ message: error.message });
     }
 };
 

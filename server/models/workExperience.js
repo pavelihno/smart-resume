@@ -20,6 +20,6 @@ const WorkExperienceSchema = new mongoose.Schema({
         required: true
     },
     endDate: Date
-});
+}, { timestamps: true });
 
 export default mongoose.model('WorkExperience', WorkExperienceSchema);

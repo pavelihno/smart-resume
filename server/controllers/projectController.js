@@ -13,7 +13,7 @@ export const createProject = async (req, res) => {
 
 export const getProjects = async (req, res) => {
     try {
-        const projects = await Project.find();
+        const projects = await Project.find().sort({ updatedAt: -1 });
         res.status(200).json(projects);
     } catch (error) {
         return internalServerError(res, error.message);
