@@ -7,12 +7,16 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DEFAULT_TEMPLATE_NAME = 'default';
+export const TEMPLATE_CATEGORIES = {
+    'RESUME': 'resume',
+    'LETTER': 'letter'
+};
+
 const TEMPLATE_FOLDER_PATH = path.join(__dirname, '../static/templates/');
 const OUTPUT_TEX_PATH = path.join(__dirname, '../static/temp/output.tex');
 const OUTPUT_PDF_PATH = path.join(__dirname, '../static/temp/output.pdf');
 
-export const escapeLatex = (text) => {
+const escapeLatex = (text) => {
     if (typeof text !== 'string') {
         return text;
     }
@@ -30,18 +34,16 @@ export const escapeLatex = (text) => {
         .replace(/'/g, '\\textquotesingle{}');
 };
 
-const escapeProfileData = (data) => {
+const escapeData = (data) => {
     if (typeof data === 'string') {
         return escapeLatex(data);
-    } else if (data instanceof Date) {
-        return data.toLocaleString('default', { month: 'short', year: 'numeric' });
     } else if (Array.isArray(data)) {
-        return data.map(escapeProfileData);
+        return data.map(escapeData);
     } else if (typeof data === 'object' && data !== null) {
         const escapedData = {};
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
-                escapedData[key] = escapeProfileData(data[key]);
+                escapedData[key] = escapeData(data[key]);
             }
         }
         return escapedData;
@@ -50,13 +52,13 @@ const escapeProfileData = (data) => {
     }
 };
 
-export const generatePDF = async (data, templateName=DEFAULT_TEMPLATE_NAME) => {
+export const generatePDF = async (data, categoryName, templateName) => {
     // Read LaTeX template
-    const templatePath = path.join(TEMPLATE_FOLDER_PATH, `${templateName}.tex`);
+    const templatePath = path.join(TEMPLATE_FOLDER_PATH, categoryName, `${templateName}.tex`);
     const templateContent = fs.readFileSync(templatePath, 'utf8');
 
     // Escape profile data
-    const escapedData = escapeProfileData(data);
+    const escapedData = escapeData(data);
 
     // Compile template using Handlebars
     const template = Handlebars.compile(templateContent);
@@ -87,7 +89,8 @@ export const generatePDF = async (data, templateName=DEFAULT_TEMPLATE_NAME) => {
     });
 };
 
-export const listTemplates = () => {
-    const templateFiles = fs.readdirSync(TEMPLATE_FOLDER_PATH);
+export const listTemplates = (categoryName) => {
+    const categoryFolderPath = path.join(TEMPLATE_FOLDER_PATH, categoryName);
+    const templateFiles = fs.readdirSync(categoryFolderPath);
     return templateFiles.map((file) => path.basename(file, '.tex'));
 };

@@ -59,7 +59,7 @@ const BaseUpdateForm = ({
     if (withTemplate) {
         const fetchTemplates = async () => {
             try {
-                const response = await api.get(`options/templates`);
+                const response = await api.get(`profiles/templates`);
                 setTemplates(response.data);
                 if (response.data.length > 0) {
                     setSelectedTemplate(response.data[0]);

@@ -2,7 +2,7 @@ import Profile from '../models/profile.js';
 import ProfileSkill from '../models/profileSkill.js';
 import Skill from '../models/skill.js';
 import { badRequestError, notFoundError, internalServerError } from '../utils/errors.js';
-import { generatePDF } from '../utils/latex.js';
+import { TEMPLATE_CATEGORIES, listTemplates, generatePDF } from '../utils/latex.js';
 
 const FILE_TYPE = {
     PDF: 'pdf',
@@ -147,6 +147,15 @@ export const deleteProfile = async (req, res) => {
     }
 };
 
+export const getTemplates = (req, res) => {
+    try {
+        const templates = listTemplates(TEMPLATE_CATEGORIES.RESUME);
+        res.status(200).json(templates);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const getSortedProfile = async (profileId) => {
     const profile = await Profile.findById(profileId)
         .populate('workExperiences educations projects links')
@@ -179,7 +188,7 @@ const generateProfileFile = async (req, res, type) => {
 
         const sortedProfile = await getSortedProfile(profileId);
 
-        const documentPaths = await generatePDF(sortedProfile, req.query.template);
+        const documentPaths = await generatePDF(sortedProfile, TEMPLATE_CATEGORIES.RESUME, req.query.template);
 
         const filePath = type === FILE_TYPE.PDF ? documentPaths.pdfPath : documentPaths.texPath;
 

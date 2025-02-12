@@ -7,7 +7,6 @@ import educationRoutes from './routes/educationRoutes.js';
 import skillRoutes from './routes/skillRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import linkRoutes from './routes/linkRoutes.js';
-import technicalRoutes from './routes/optionRoutes.js';
 
 const connectDB = async () => {
     const MONGO_URI = `mongodb://${process.env.MONGODB_ROOT_USER}:${process.env.MONGODB_ROOT_USER_PASSWORD}@mongo:${process.env.MONGODB_DOCKER_PORT}/${process.env.MONGODB_DATABASE}`;
@@ -34,7 +33,6 @@ app.use('/educations', educationRoutes);
 app.use('/skills', skillRoutes);
 app.use('/projects', projectRoutes);
 app.use('/links', linkRoutes);
-app.use('/options', technicalRoutes);
 
 connectDB();
 
