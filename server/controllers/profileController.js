@@ -156,7 +156,7 @@ export const getTemplates = (req, res) => {
     }
 };
 
-const getSortedProfile = async (profileId) => {
+const getFormattedProfile = async (profileId) => {
     const profile = await Profile.findById(profileId)
         .populate('workExperiences educations projects links')
         .populate({
@@ -166,13 +166,65 @@ const getSortedProfile = async (profileId) => {
             }
         });
 
-    const sortedProfile = profile.toObject();
-    sortedProfile.workExperiences.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-    sortedProfile.educations.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-    sortedProfile.projects.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-    sortedProfile.skills.sort((a, b) => a.order - b.order);
+    let formatedProfile = profile.toObject();
+    
+    // Sort work experiences, educations, projects and skills by start date and order
+    formatedProfile.workExperiences.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    formatedProfile.educations.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    formatedProfile.projects.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    formatedProfile.skills.sort((a, b) => a.order - b.order);
 
-    return sortedProfile;
+    /*  
+        Format dates
+        Rules:
+        - if the start and end are in the same year, keep only the end year
+        - if the start and end are in the same month, keep only the month and year
+        - if the end is missing, return 'Present' 
+    */
+    const getStartEndDates = (startDate, endDate) => {
+        const startMonth = startDate.toLocaleString('default', { month: 'short' });
+        const startYear = startDate.getFullYear();
+        const endMonth = endDate ? endDate.toLocaleString('default', { month: 'short' }) : null;
+        const endYear = endDate ? endDate.getFullYear() : null;
+
+        if (!endDate) {
+            return [`${startMonth} ${startYear}`, 'Present'];
+        } else if (startYear === endYear) {
+            if (startMonth === endMonth) {
+                return [`${startMonth} ${startYear}`, null];
+            }
+            return [`${startMonth}`, `${endMonth} ${endYear}`];
+        } else {
+            return [`${startMonth} ${startYear}`, `${endMonth} ${endYear}`];
+        }
+    };
+
+    const formatDates = (data) => {
+        if (Array.isArray(data)) {
+            return data.map(formatDates);
+        } else if (typeof data === 'object' && data !== null) {
+            const formattedData = {};
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    if (key === 'startDate') {
+                        const [startDate, endDate] = getStartEndDates(data.startDate, data.endDate);
+                        formattedData.startDate = startDate;
+                        formattedData.endDate = endDate;
+                    } else if (key === 'endDate') {}
+                    else {
+                        formattedData[key] = formatDates(data[key]);
+                    }
+                }
+            }
+            return formattedData;
+        } else {
+            return data;
+        }
+    };
+
+    formatedProfile = formatDates(formatedProfile);
+
+    return formatedProfile;
 };
 
 const generateProfileFile = async (req, res, type) => {
@@ -186,13 +238,13 @@ const generateProfileFile = async (req, res, type) => {
             return badRequestError('Profile fields cannot be empty');
         }
 
-        const sortedProfile = await getSortedProfile(profileId);
+        const formatedProfile = await getFormattedProfile(profileId);
 
-        const documentPaths = await generatePDF(sortedProfile, TEMPLATE_CATEGORIES.RESUME, req.query.template);
+        const documentPaths = await generatePDF(formatedProfile, TEMPLATE_CATEGORIES.RESUME, req.query.template);
 
         const filePath = type === FILE_TYPE.PDF ? documentPaths.pdfPath : documentPaths.texPath;
 
-        res.setHeader('Content-Disposition', `attachment; filename="${sortedProfile.name}. ${sortedProfile.title}.${type}"`);
+        res.setHeader('Content-Disposition', `attachment; filename="${formatedProfile.name}. ${formatedProfile.title}.${type}"`);
         res.status(200).sendFile(filePath, (err) => {
             if (err) {
                 return internalServerError(res, err.message);

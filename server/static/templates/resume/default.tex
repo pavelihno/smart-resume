@@ -111,7 +111,7 @@
   \resumeSubHeadingListStart
   {{#each workExperiences}}
     \resumeSubheading
-    { {{this.position}} }{ {{this.startDate}} -- {{#if this.endDate}}{{this.endDate}}{{else}}Present{{/if}} }
+    { {{this.position}} }{ {{this.startDate}}{{#if this.endDate}} -- {{this.endDate}}{{/if}} }
         { {{this.company}} }{ {{this.location}} }
         \resumeItemListStart
           \resumeItem{\textbf{Domain}: {{this.domain}} }
@@ -127,7 +127,7 @@
   \resumeSubHeadingListStart
   {{#each educations}}
     \resumeSubheading
-    { {{this.institution}} } { {{this.startDate}} -- {{#if this.endDate}}{{this.endDate}}{{else}}Present{{/if}} }
+    { {{this.institution}} } { {{this.startDate}}{{#if this.endDate}} -- {{this.endDate}}{{/if}} }
         { {{this.educationLevel}}, {{this.degree}}, {{this.department}} }{ {{this.location}} }
         \resumeSubSubheading
           { {{this.specialization}} }
@@ -150,7 +150,7 @@
     \resumeSubHeadingListStart
     {{#each projects}}
       \resumeProjectHeading
-        { \textbf{ {{#if this.url}} \href{ {{this.url}} }{ {{this.title}} } {{else}}{{this.title}}{{/if}} }{{#if this.description}}$|$\emph{ {{this.description}} } {{/if}} }{ {{this.startDate}} -- {{#if this.endDate}}{{this.endDate}}{{else}}Present{{/if}} }
+        { \textbf{ {{#if this.url}} \href{ {{this.url}} }{ {{this.title}} } {{else}}{{this.title}}{{/if}} }{{#if this.description}}$|$\emph{ {{this.description}} } {{/if}} }{ {{this.startDate}}{{#if this.endDate}} -- {{this.endDate}}{{/if}} }
           \resumeItemListStart
             {{#each this.responsibilities}}
               \resumeItem{ {{this}} }
