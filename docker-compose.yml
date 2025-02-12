@@ -44,7 +44,7 @@ services:
       - MONGO_INITDB_DATABASE=$MONGODB_DATABASE
     volumes:
       - ./db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - ./db/tmp:/data/db
+      - $MONGODB_MOUNT_PATH:/data/db
   
   mongo-express:
     image: mongo-express
