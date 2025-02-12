@@ -4,6 +4,13 @@ import { Grid, Typography, Button, Box, Paper, Container, Alert, TextField, Divi
 import Base from './Base';
 
 const BaseForm = ({ title, formFields, onSubmit, handleDelete, handleGeneratePdf, handleGenerateTex, submitButton, isSuccess, successMessage, errors, templates, selectedTemplate, handleTemplateChange }) => {
+
+    const handleDeleteWithConfirmation = () => {
+        if (window.confirm(`${title} will be deleted. Are you sure?`)) {
+            handleDelete();
+        }
+    };
+    
     return (
         <Base>
             <Container component="main" maxWidth="md">
@@ -49,7 +56,7 @@ const BaseForm = ({ title, formFields, onSubmit, handleDelete, handleGeneratePdf
                                                 {submitButton}
                                             </Button>
                                             {submitButton === 'Update' && (
-                                                <Button variant="contained" color="secondary" onClick={handleDelete}>
+                                                <Button variant="contained" color="secondary" onClick={handleDeleteWithConfirmation}>
                                                     Delete
                                                 </Button>
                                             )}

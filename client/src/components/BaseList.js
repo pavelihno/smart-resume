@@ -8,6 +8,13 @@ import AddIcon from '@mui/icons-material/Add';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, createLink }) => {
+
+    const handleDeleteWithConfirmation = (id) => {
+        if (window.confirm('Item will be deleted. Are you sure?')) {
+            handleDelete(id);
+        }
+    };
+    
     return (
         <Base>
             <Container component="main" maxWidth="lg">
@@ -40,7 +47,7 @@ const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, 
                                             <IconButton onClick={() => handleEdit(row._id)} color="primary">
                                                 <EditIcon />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDelete(row._id)} color="secondary">
+                                            <IconButton onClick={() => handleDeleteWithConfirmation(row._id)} color="secondary">
                                                 <DeleteIcon />
                                             </IconButton>
                                             {handleCopy && (
