@@ -182,10 +182,12 @@ const getFormattedProfile = async (profileId) => {
         - if the end is missing, return 'Present' 
     */
     const getStartEndDates = (startDate, endDate) => {
-        const startMonth = startDate.toLocaleString('default', { month: 'short' });
-        const startYear = startDate.getFullYear();
-        const endMonth = endDate ? endDate.toLocaleString('default', { month: 'short' }) : null;
-        const endYear = endDate ? endDate.getFullYear() : null;
+        const timeZone = process.env.TZ;
+
+        const startMonth = startDate.toLocaleString('default', { month: 'short', timeZone });
+        const startYear = startDate.toLocaleString('default', { year: 'numeric', timeZone })
+        const endMonth = endDate ? endDate.toLocaleString('default', { month: 'short', timeZone }) : null;
+        const endYear = endDate ? endDate.toLocaleString('default', { year: 'numeric', timeZone }) : null;
 
         if (!endDate) {
             return [`${startMonth} ${startYear}`, 'Present'];

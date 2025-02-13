@@ -1,7 +1,11 @@
 import React from 'react';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { enGB } from 'date-fns/locale/en-GB';
 import { Grid, TextField } from '@mui/material';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+
+// Week starts on Monday
+registerLocale('en-GB', enGB);
 
 const DatePickerField = ({ label, value, onChange, required, dateFormat = "dd.MM.yyyy", ...props }) => (
     <>

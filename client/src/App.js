@@ -1,7 +1,5 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { registerLocale } from 'react-datepicker';
-import { enGB } from 'date-fns/locale/en-GB';
 
 import Home from './components/Home';
 import ProfileList from './components/profile/ProfileList';
@@ -22,9 +20,6 @@ import UpdateProjectForm from './components/project/UpdateProjectForm';
 import LinkList from './components/link/LinkList';
 import CreateLinkForm from './components/link/CreateLinkForm';
 import UpdateLinkForm from './components/link/UpdateLinkForm';
-
-// Week starts on Monday
-registerLocale('en-GB', enGB);
 
 function App() {
     return (
