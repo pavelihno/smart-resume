@@ -96,14 +96,13 @@
 %-------------------------------------------
 %%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \begin{document}
 
 \begin{center}
-    \textbf{\Huge\scshape {{name}} } \\ \vspace{1pt}
-    {{#each phoneNumbers}} \small{\underline{ {{this}} }} $|${{/each}}
-    {{#each emails}}\small{\underline{ {{this}} }}$|${{/each}}
-    {{#each links}} \small{\href{ {{this.url}} }{\underline{ {{this.type}} }}}{{#unless @last}} $|$ {{/unless}}{{/each}}
+  \textbf{\Huge\scshape {{name}} } \\ \vspace{1pt}
+  {{#each phoneNumbers}} \small{\underline{ {{this}} }}\, {{/each}}
+  {{#each emails}} \small{\underline{ {{this}} }}\, {{/each}}
+  {{#each links}} \small{\href{ {{this.url}} }{\underline{ {{this.type}} }}}\, {{/each}}
 \end{center}
 
 %-----------EXPERIENCE-----------
