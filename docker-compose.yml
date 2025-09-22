@@ -37,7 +37,6 @@ services:
     container_name: mongo
     ports:
       - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
-    restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGODB_ROOT_USER
       - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_ROOT_USER_PASSWORD

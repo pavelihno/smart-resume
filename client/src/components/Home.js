@@ -3,9 +3,7 @@ import React, { useEffect } from 'react';
 import ProfileList from './profile/ProfileList';
 
 const Home = () => {
-    return (
-        <ProfileList />
-    );
+	return <ProfileList />;
 };
 
 export default Home;

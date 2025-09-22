@@ -22,35 +22,35 @@ import CreateLinkForm from './components/link/CreateLinkForm';
 import UpdateLinkForm from './components/link/UpdateLinkForm';
 
 function App() {
-    return (
-        <Routes>
-            <Route path="/" element={<Home />} />
+	return (
+		<Routes>
+			<Route path='/' element={<Home />} />
 
-            <Route path="/profiles" element={<ProfileList />} />
-            <Route path="/profiles/new" element={<CreateProfileForm />} />
-            <Route path="/profiles/:id" element={<UpdateProfileForm />} />
+			<Route path='/profiles' element={<ProfileList />} />
+			<Route path='/profiles/new' element={<CreateProfileForm />} />
+			<Route path='/profiles/:id' element={<UpdateProfileForm />} />
 
-            <Route path="/work-experiences" element={<WorkExperienceList />} />
-            <Route path="/work-experiences/new" element={<CreateWorkExperienceForm />} />
-            <Route path="/work-experiences/:id" element={<UpdateWorkExperienceForm />} />
+			<Route path='/work-experiences' element={<WorkExperienceList />} />
+			<Route path='/work-experiences/new' element={<CreateWorkExperienceForm />} />
+			<Route path='/work-experiences/:id' element={<UpdateWorkExperienceForm />} />
 
-            <Route path="/educations" element={<EducationList />} />
-            <Route path="/educations/new" element={<CreateEducationForm />} />
-            <Route path="/educations/:id" element={<UpdateEducationForm />} />
+			<Route path='/educations' element={<EducationList />} />
+			<Route path='/educations/new' element={<CreateEducationForm />} />
+			<Route path='/educations/:id' element={<UpdateEducationForm />} />
 
-            <Route path="/skills" element={<SkillList />} />
-            <Route path="/skills/new" element={<CreateSkillForm />} />
-            <Route path="/skills/:id" element={<UpdateSkillForm />} />
+			<Route path='/skills' element={<SkillList />} />
+			<Route path='/skills/new' element={<CreateSkillForm />} />
+			<Route path='/skills/:id' element={<UpdateSkillForm />} />
 
-            <Route path="/projects" element={<ProjectList />} />
-            <Route path="/projects/new" element={<CreateProjectForm />} />
-            <Route path="/projects/:id" element={<UpdateProjectForm />} />
+			<Route path='/projects' element={<ProjectList />} />
+			<Route path='/projects/new' element={<CreateProjectForm />} />
+			<Route path='/projects/:id' element={<UpdateProjectForm />} />
 
-            <Route path="/links" element={<LinkList />} />
-            <Route path="/links/new" element={<CreateLinkForm />} />
-            <Route path="/links/:id" element={<UpdateLinkForm />} />
-        </Routes>
-    );
+			<Route path='/links' element={<LinkList />} />
+			<Route path='/links/new' element={<CreateLinkForm />} />
+			<Route path='/links/:id' element={<UpdateLinkForm />} />
+		</Routes>
+	);
 }
 
 export default App;

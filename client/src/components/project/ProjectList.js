@@ -5,52 +5,52 @@ import BaseList from '../BaseList';
 import { api } from '../../api';
 
 const ProjectList = () => {
-    const navigate = useNavigate();
-    const [projects, setProjects] = useState([]);
-    const [errors, setErrors] = useState({});
+	const navigate = useNavigate();
+	const [projects, setProjects] = useState([]);
+	const [errors, setErrors] = useState({});
 
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const response = await api.get('/projects');
-                setProjects(response.data);
-            } catch (error) {
-                setErrors(error.response.data);
-            }
-        };
+	useEffect(() => {
+		const fetchProjects = async () => {
+			try {
+				const response = await api.get('/projects');
+				setProjects(response.data);
+			} catch (error) {
+				setErrors(error.response.data);
+			}
+		};
 
-        fetchProjects();
-    }, []);
+		fetchProjects();
+	}, []);
 
-    const handleEdit = (id) => {
-        navigate(`/projects/${id}`);
-    };
+	const handleEdit = (id) => {
+		navigate(`/projects/${id}`);
+	};
 
-    const handleDelete = async (id) => {
-        try {
-            await api.delete(`/projects/${id}`);
-            setProjects((prevProjects) => prevProjects.filter((project) => project._id !== id));
-        } catch (error) {
-            setErrors(error.response.data);
-        }
-    };
+	const handleDelete = async (id) => {
+		try {
+			await api.delete(`/projects/${id}`);
+			setProjects((prevProjects) => prevProjects.filter((project) => project._id !== id));
+		} catch (error) {
+			setErrors(error.response.data);
+		}
+	};
 
-    const columns = {
-        title: 'Title',
-        url: 'URL',
-        description: 'Description'
-    };
+	const columns = {
+		title: 'Title',
+		url: 'URL',
+		description: 'Description',
+	};
 
-    return (
-        <BaseList
-            title="Projects"
-            createLink="/projects/new"
-            columns={columns}
-            rows={projects}
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
-        />
-    );
+	return (
+		<BaseList
+			title='Projects'
+			createLink='/projects/new'
+			columns={columns}
+			rows={projects}
+			handleEdit={handleEdit}
+			handleDelete={handleDelete}
+		/>
+	);
 };
 
 export default ProjectList;

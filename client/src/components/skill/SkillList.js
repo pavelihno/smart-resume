@@ -5,51 +5,51 @@ import BaseList from '../BaseList';
 import { api } from '../../api';
 
 const SkillList = () => {
-    const navigate = useNavigate();
-    const [skills, setSkills] = useState([]);
-    const [errors, setErrors] = useState({});
+	const navigate = useNavigate();
+	const [skills, setSkills] = useState([]);
+	const [errors, setErrors] = useState({});
 
-    useEffect(() => {
-        const fetchSkills = async () => {
-            try {
-                const response = await api.get('/skills');
-                setSkills(response.data);
-            } catch (error) {
-                setErrors(error.response.data);
-            }
-        };
+	useEffect(() => {
+		const fetchSkills = async () => {
+			try {
+				const response = await api.get('/skills');
+				setSkills(response.data);
+			} catch (error) {
+				setErrors(error.response.data);
+			}
+		};
 
-        fetchSkills();
-    }, []);
+		fetchSkills();
+	}, []);
 
-    const handleEdit = (id) => {
-        navigate(`/skills/${id}`);
-    };
+	const handleEdit = (id) => {
+		navigate(`/skills/${id}`);
+	};
 
-    const handleDelete = async (id) => {
-        try {
-            await api.delete(`/skills/${id}`);
-            setSkills((prevSkills) => prevSkills.filter((skill) => skill._id !== id));
-        } catch (error) {
-            setErrors(error.response.data);
-        }
-    };
+	const handleDelete = async (id) => {
+		try {
+			await api.delete(`/skills/${id}`);
+			setSkills((prevSkills) => prevSkills.filter((skill) => skill._id !== id));
+		} catch (error) {
+			setErrors(error.response.data);
+		}
+	};
 
-    const columns = {
-        title: 'Title',
-        details: 'Details'
-    };
+	const columns = {
+		title: 'Title',
+		details: 'Details',
+	};
 
-    return (
-        <BaseList
-            title="Skills"
-            createLink="/skills/new"
-            columns={columns}
-            rows={skills}
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
-        />
-    );
+	return (
+		<BaseList
+			title='Skills'
+			createLink='/skills/new'
+			columns={columns}
+			rows={skills}
+			handleEdit={handleEdit}
+			handleDelete={handleDelete}
+		/>
+	);
 };
 
 export default SkillList;

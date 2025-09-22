@@ -6,98 +6,92 @@ import BulletedListField from '../../formFields/BulletedListField';
 import TextFieldInput from '../../formFields/TextFieldInput';
 
 const ProjectForm = ({ project, handleSubmit, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
-    const [formData, setFormData] = useState({
-        title: project?.title || '',
-        url: project?.url || '',
-        description: project?.description || '',
-        responsibilities: project?.responsibilities || [],
-        startDate: project?.startDate || null,
-        endDate: project?.endDate || null
-    });
+	const [formData, setFormData] = useState({
+		title: project?.title || '',
+		url: project?.url || '',
+		description: project?.description || '',
+		responsibilities: project?.responsibilities || [],
+		startDate: project?.startDate || null,
+		endDate: project?.endDate || null,
+	});
 
-    useEffect(() => {
-        if (project) {
-            setFormData({
-                title: project.title,
-                url: project.url,
-                description: project.description,
-                responsibilities: project.responsibilities,
-                startDate: project.startDate ? new Date(project.startDate) : null,
-                endDate: project.endDate ? new Date(project.endDate) : null
-            });
-        }
-    }, [project]);
+	useEffect(() => {
+		if (project) {
+			setFormData({
+				title: project.title,
+				url: project.url,
+				description: project.description,
+				responsibilities: project.responsibilities,
+				startDate: project.startDate ? new Date(project.startDate) : null,
+				endDate: project.endDate ? new Date(project.endDate) : null,
+			});
+		}
+	}, [project]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
-    };
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((prevData) => ({ ...prevData, [name]: value }));
+	};
 
-    const handleDateChange = (name, date) => {
-        setFormData((prevData) => ({ ...prevData, [name]: date }));
-    };
+	const handleDateChange = (name, date) => {
+		setFormData((prevData) => ({ ...prevData, [name]: date }));
+	};
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        handleSubmit(formData);
-    };
+	const onSubmit = (e) => {
+		e.preventDefault();
+		handleSubmit(formData);
+	};
 
-    return (
-        <BaseForm
-            title="Project"
-            formFields={
-                <>
-                    <TextFieldInput
-                        required
-                        fullWidth
-                        label="Title"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                    />
-                    <TextFieldInput
-                        fullWidth
-                        label="URL"
-                        name="url"
-                        value={formData.url}
-                        onChange={handleChange}
-                    />
-                    <TextFieldInput
-                        fullWidth
-                        label="Description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                    />
-                    <BulletedListField
-                        label="Responsibilities"
-                        formData={formData}
-                        setFormData={setFormData}
-                        itemsKey="responsibilities"
-                        newItemKey="newResponsibility"
-                        renderItem={(item) => item}
-                    />
-                    <DatePickerField
-                        required
-                        label="Start Date"
-                        value={formData.startDate}
-                        onChange={(date) => handleDateChange('startDate', date)}
-                    />
-                    <DatePickerField
-                        label="End Date"
-                        value={formData.endDate}
-                        onChange={(date) => handleDateChange('endDate', date)}
-                    />
-                </>
-            }
-            onSubmit={onSubmit}
-            handleDelete={handleDelete}
-            submitButton={submitButton}
-            isSuccess={isSuccess}
-            successMessage={successMessage}
-            errors={errors}
-        />
-    );
+	return (
+		<BaseForm
+			title='Project'
+			formFields={
+				<>
+					<TextFieldInput
+						required
+						fullWidth
+						label='Title'
+						name='title'
+						value={formData.title}
+						onChange={handleChange}
+					/>
+					<TextFieldInput fullWidth label='URL' name='url' value={formData.url} onChange={handleChange} />
+					<TextFieldInput
+						fullWidth
+						label='Description'
+						name='description'
+						value={formData.description}
+						onChange={handleChange}
+					/>
+					<BulletedListField
+						label='Responsibilities'
+						formData={formData}
+						setFormData={setFormData}
+						itemsKey='responsibilities'
+						newItemKey='newResponsibility'
+						renderItem={(item) => item}
+					/>
+					<DatePickerField
+						required
+						label='Start Date'
+						value={formData.startDate}
+						onChange={(date) => handleDateChange('startDate', date)}
+					/>
+					<DatePickerField
+						label='End Date'
+						value={formData.endDate}
+						onChange={(date) => handleDateChange('endDate', date)}
+					/>
+				</>
+			}
+			onSubmit={onSubmit}
+			handleDelete={handleDelete}
+			submitButton={submitButton}
+			isSuccess={isSuccess}
+			successMessage={successMessage}
+			errors={errors}
+		/>
+	);
 };
 
 export default ProjectForm;
