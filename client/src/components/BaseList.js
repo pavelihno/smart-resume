@@ -22,6 +22,43 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import Base from './Base';
 
+const PICK_KEYS = ['title', 'name', 'label', 'type', 'value'];
+
+const pickDisplayString = (value) => {
+	if (value === null || value === undefined) {
+		return '';
+	}
+
+	if (Array.isArray(value)) {
+		const flattened = value.map((item) => pickDisplayString(item)).filter((item) => item !== '');
+		return flattened.join(', ');
+	}
+
+	if (typeof value === 'object') {
+		for (const key of PICK_KEYS) {
+			if (Object.prototype.hasOwnProperty.call(value, key)) {
+				const selected = pickDisplayString(value[key]);
+				if (selected !== '') {
+					return selected;
+				}
+			}
+		}
+
+		const objectValues = Object.values(value)
+			.map((item) => pickDisplayString(item))
+			.filter((item) => item !== '');
+
+		return objectValues.join(', ');
+	}
+
+	return String(value);
+};
+
+const formatCellValue = (value) => {
+	const display = pickDisplayString(value);
+	return display === '' ? '—' : display;
+};
+
 const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, createLink }) => {
 	const handleDeleteWithConfirmation = (id) => {
 		if (window.confirm('Item will be deleted. Are you sure?')) {
@@ -52,9 +89,6 @@ const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, 
 						<Box>
 							<Typography variant='h4' component='h1' sx={{ fontWeight: 700 }}>
 								{title}
-							</Typography>
-							<Typography variant='body2' color='text.secondary'>
-								Manage and iterate quickly on your content inventory.
 							</Typography>
 						</Box>
 						<Button
@@ -100,7 +134,7 @@ const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, 
 										<TableRow key={row._id} hover>
 											{Object.keys(columns).map((key) => (
 												<TableCell key={key} sx={{ verticalAlign: 'top' }}>
-													{row[key]}
+													{formatCellValue(row[key])}
 												</TableCell>
 											))}
 											<TableCell>

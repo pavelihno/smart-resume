@@ -9,10 +9,10 @@ import MultiAutocompleteField from '../../formFields/MultiAutocompleteField';
 
 const ProfileForm = ({
 	profile,
-	handleSubmit,
 	handleDelete,
 	handleGeneratePdf,
 	handleGenerateTex,
+	handleOpenOverleaf,
 	isSuccess,
 	successMessage,
 	submitButton,
@@ -100,11 +100,6 @@ const ProfileForm = ({
 		setFormData((prevData) => ({ ...prevData, [name]: value }));
 		console.error(formData);
 		console.error(skillOptions);
-	};
-
-	const onSubmit = (e) => {
-		e.preventDefault();
-		handleSubmit(formData);
 	};
 
 	return (
@@ -205,10 +200,10 @@ const ProfileForm = ({
 					/>
 				</>
 			}
-			onSubmit={onSubmit}
 			handleDelete={handleDelete}
 			handleGeneratePdf={handleGeneratePdf}
 			handleGenerateTex={handleGenerateTex}
+			handleOpenOverleaf={handleOpenOverleaf}
 			submitButton={submitButton}
 			isSuccess={isSuccess}
 			successMessage={successMessage}

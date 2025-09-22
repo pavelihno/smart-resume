@@ -54,7 +54,7 @@ const BaseUpdateForm = ({
 	const [selectedTemplate, setSelectedTemplate] = useState('');
 	const [templates, setTemplates] = useState([]);
 
-	let handleTemplateChange, handleGeneratePdf, handleGenerateTex;
+	let handleTemplateChange, handleGeneratePdf, handleGenerateTex, handleOpenOverleaf;
 
 	if (withTemplate) {
 		const fetchTemplates = async () => {
@@ -108,6 +108,57 @@ const BaseUpdateForm = ({
 
 		handleGeneratePdf = () => handleGenerateFile('pdf');
 		handleGenerateTex = () => handleGenerateFile('tex');
+
+		handleOpenOverleaf = async () => {
+			setErrors({});
+			try {
+				const response = await api.get(`${endpoint}/${id}/tex`, {
+					params: { template: selectedTemplate },
+					responseType: 'blob',
+				});
+
+				const blob = new Blob([response.data], { type: 'application/x-tex' });
+
+				const dataUrl = await new Promise((resolve, reject) => {
+					const reader = new FileReader();
+					reader.onloadend = () => {
+						if (typeof reader.result === 'string') {
+							resolve(reader.result);
+						} else {
+							reject(new Error('Unexpected reader result type'));
+						}
+					};
+					reader.onerror = () => reject(reader.error);
+					reader.readAsDataURL(blob);
+				});
+
+				const form = document.createElement('form');
+				form.action = 'https://www.overleaf.com/docs';
+				form.method = 'POST';
+				form.target = '_blank';
+
+				const input = document.createElement('input');
+				input.type = 'hidden';
+				input.name = 'snip_uri';
+				input.value = dataUrl;
+
+				form.appendChild(input);
+				document.body.appendChild(form);
+				form.submit();
+				document.body.removeChild(form);
+			} catch (error) {
+				if (error.response && error.response.data instanceof Blob) {
+					const errorText = await error.response.data.text();
+					try {
+						setErrors(JSON.parse(errorText));
+					} catch (parseError) {
+						setErrors({ message: errorText });
+					}
+				} else {
+					setErrors(error.response ? error.response.data : { message: error.message });
+				}
+			}
+		};
 	}
 
 	return (
@@ -124,6 +175,7 @@ const BaseUpdateForm = ({
 			handleTemplateChange={handleTemplateChange}
 			handleGeneratePdf={handleGeneratePdf}
 			handleGenerateTex={handleGenerateTex}
+			handleOpenOverleaf={handleOpenOverleaf}
 		/>
 	);
 };

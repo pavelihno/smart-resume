@@ -18,10 +18,10 @@ import Base from './Base';
 const BaseForm = ({
 	title,
 	formFields,
-	onSubmit,
 	handleDelete,
 	handleGeneratePdf,
 	handleGenerateTex,
+	handleOpenOverleaf,
 	submitButton,
 	isSuccess,
 	successMessage,
@@ -85,9 +85,6 @@ const BaseForm = ({
 						<Typography variant='h4' component='h1' sx={{ fontWeight: 700, mb: 1 }}>
 							{title}
 						</Typography>
-						<Typography variant='body1' color='text.secondary'>
-							Refine the details below and keep your resume content polished.
-						</Typography>
 					</Box>
 
 					<Grid container spacing={3}>
@@ -148,6 +145,24 @@ const BaseForm = ({
 										>
 											Generate TEX
 										</Button>
+										{handleOpenOverleaf && (
+											<Button
+												variant='contained'
+												sx={{
+													...exportButtonBaseSx,
+													background: 'linear-gradient(135deg, #44a148 0%, #2f7d34 100%)',
+													color: '#ffffff',
+													boxShadow: '0 14px 28px rgba(47, 125, 52, 0.28)',
+													'&:hover': {
+														background: 'linear-gradient(135deg, #3d9341 0%, #27712d 100%)',
+														boxShadow: '0 16px 32px rgba(39, 113, 45, 0.34)',
+													},
+												}}
+												onClick={handleOpenOverleaf}
+											>
+												Open in Overleaf
+											</Button>
+										)}
 									</Stack>
 								</Stack>
 							</Grid>

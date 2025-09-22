@@ -5,7 +5,7 @@ import DatePickerField from '../../formFields/DatePickerField';
 import BulletedListField from '../../formFields/BulletedListField';
 import TextFieldInput from '../../formFields/TextFieldInput';
 
-const ProjectForm = ({ project, handleSubmit, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
+const ProjectForm = ({ project, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
 	const [formData, setFormData] = useState({
 		title: project?.title || '',
 		url: project?.url || '',
@@ -35,11 +35,6 @@ const ProjectForm = ({ project, handleSubmit, handleDelete, isSuccess, successMe
 
 	const handleDateChange = (name, date) => {
 		setFormData((prevData) => ({ ...prevData, [name]: date }));
-	};
-
-	const onSubmit = (e) => {
-		e.preventDefault();
-		handleSubmit(formData);
 	};
 
 	return (
@@ -84,7 +79,6 @@ const ProjectForm = ({ project, handleSubmit, handleDelete, isSuccess, successMe
 					/>
 				</>
 			}
-			onSubmit={onSubmit}
 			handleDelete={handleDelete}
 			submitButton={submitButton}
 			isSuccess={isSuccess}
