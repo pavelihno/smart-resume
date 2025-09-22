@@ -1,5 +1,11 @@
 import express from 'express';
-import { createWorkExperience, getWorkExperiences, getWorkExperienceById, updateWorkExperience, deleteWorkExperience } from '../controllers/workExperienceController.js';
+import {
+	createWorkExperience,
+	getWorkExperiences,
+	getWorkExperienceById,
+	updateWorkExperience,
+	deleteWorkExperience,
+} from '../controllers/workExperienceController.js';
 
 const router = express.Router();
 
