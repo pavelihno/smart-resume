@@ -98,85 +98,93 @@ const BaseForm = ({
 					</Box>
 
 					<Grid container spacing={3}>
-						{submitButton === 'Update' && handleGeneratePdf && handleGenerateTex && (
-							<Grid item xs={12}>
-								<Stack
-									direction={{ xs: 'column', md: 'row' }}
-									spacing={2.5}
-									sx={{
-										backgroundColor: 'rgba(51, 87, 255, 0.06)',
-										borderRadius: 3,
-										p: { xs: 2, md: 3 },
-										alignItems: { xs: 'stretch', md: 'center' },
-									}}
-								>
-									<Autocomplete
-										disableClearable
-										options={templates}
-										value={selectedTemplate}
-										onChange={(event, newValue) => {
-											if (newValue) {
-												handleTemplateChange(newValue);
-											}
+						{submitButton === 'Update' &&
+							(handleGeneratePdf || handleGenerateTex || handleOpenOverleaf) && (
+								<Grid item xs={12}>
+									<Stack
+										direction={{ xs: 'column', md: 'row' }}
+										spacing={2.5}
+										sx={{
+											backgroundColor: 'rgba(51, 87, 255, 0.06)',
+											borderRadius: 3,
+											p: { xs: 2, md: 3 },
+											alignItems: { xs: 'stretch', md: 'center' },
 										}}
-										renderInput={(params) => <TextField {...params} label='Template' />}
-										fullWidth
-									/>
-									<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-										<Button
-											variant='contained'
-											sx={{
-												...exportButtonBaseSx,
-												background: 'linear-gradient(135deg, #3357FF 0%, #4f74ff 100%)',
-												color: '#ffffff',
-												boxShadow: '0 14px 32px rgba(51, 87, 255, 0.28)',
-												'&:hover': {
-													background: 'linear-gradient(135deg, #2646db 0%, #4f74ff 100%)',
-													boxShadow: '0 16px 36px rgba(38, 70, 219, 0.32)',
-												},
+									>
+										<Autocomplete
+											disableClearable
+											options={templates}
+											value={selectedTemplate}
+											onChange={(event, newValue) => {
+												if (newValue) {
+													handleTemplateChange(newValue);
+												}
 											}}
-											onClick={handleGeneratePdf}
-										>
-											Generate PDF
-										</Button>
-										<Button
-											variant='contained'
-											sx={{
-												...exportButtonBaseSx,
-												background: 'linear-gradient(135deg, #1EC996 0%, #0fa36b 100%)',
-												color: '#ffffff',
-												boxShadow: '0 14px 28px rgba(15, 163, 107, 0.28)',
-												'&:hover': {
-													background: 'linear-gradient(135deg, #18b482 0%, #079964 100%)',
-													boxShadow: '0 16px 32px rgba(7, 153, 100, 0.34)',
-												},
-											}}
-											onClick={handleGenerateTex}
-										>
-											Generate TEX
-										</Button>
-										{handleOpenOverleaf && (
-											<Button
-												variant='contained'
-												sx={{
-													...exportButtonBaseSx,
-													background: 'linear-gradient(135deg, #44a148 0%, #2f7d34 100%)',
-													color: '#ffffff',
-													boxShadow: '0 14px 28px rgba(47, 125, 52, 0.28)',
-													'&:hover': {
-														background: 'linear-gradient(135deg, #3d9341 0%, #27712d 100%)',
-														boxShadow: '0 16px 32px rgba(39, 113, 45, 0.34)',
-													},
-												}}
-												onClick={handleOpenOverleaf}
-											>
-												Open in Overleaf
-											</Button>
-										)}
+											renderInput={(params) => <TextField {...params} label='Template' />}
+											fullWidth
+										/>
+										<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+											{handleGeneratePdf && (
+												<Button
+													variant='contained'
+													sx={{
+														...exportButtonBaseSx,
+														background: 'linear-gradient(135deg, #3357FF 0%, #4f74ff 100%)',
+														color: '#ffffff',
+														boxShadow: '0 14px 32px rgba(51, 87, 255, 0.28)',
+														'&:hover': {
+															background:
+																'linear-gradient(135deg, #2646db 0%, #4f74ff 100%)',
+															boxShadow: '0 16px 36px rgba(38, 70, 219, 0.32)',
+														},
+													}}
+													onClick={handleGeneratePdf}
+												>
+													Generate PDF
+												</Button>
+											)}
+											{handleGenerateTex && (
+												<Button
+													variant='contained'
+													sx={{
+														...exportButtonBaseSx,
+														background: 'linear-gradient(135deg, #1EC996 0%, #0fa36b 100%)',
+														color: '#ffffff',
+														boxShadow: '0 14px 28px rgba(15, 163, 107, 0.28)',
+														'&:hover': {
+															background:
+																'linear-gradient(135deg, #18b482 0%, #079964 100%)',
+															boxShadow: '0 16px 32px rgba(7, 153, 100, 0.34)',
+														},
+													}}
+													onClick={handleGenerateTex}
+												>
+													Generate TEX
+												</Button>
+											)}
+											{handleOpenOverleaf && (
+												<Button
+													variant='contained'
+													sx={{
+														...exportButtonBaseSx,
+														background: 'linear-gradient(135deg, #44a148 0%, #2f7d34 100%)',
+														color: '#ffffff',
+														boxShadow: '0 14px 28px rgba(47, 125, 52, 0.28)',
+														'&:hover': {
+															background:
+																'linear-gradient(135deg, #3d9341 0%, #27712d 100%)',
+															boxShadow: '0 16px 32px rgba(39, 113, 45, 0.34)',
+														},
+													}}
+													onClick={handleOpenOverleaf}
+												>
+													Open in Overleaf
+												</Button>
+											)}
+										</Stack>
 									</Stack>
-								</Stack>
-							</Grid>
-						)}
+								</Grid>
+							)}
 
 						<Grid item xs={12}>
 							<Divider sx={{ my: { xs: 1, md: 2 } }} />

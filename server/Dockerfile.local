@@ -14,6 +14,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE $EXPRESS_DOCKER_PORT
+EXPOSE 8080
 
 CMD ["npm", "run", "dev"]

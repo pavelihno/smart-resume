@@ -10,7 +10,7 @@ import linkRoutes from './routes/linkRoutes.js';
 import coverLetterRoutes from './routes/coverLetterRoutes.js';
 
 const connectDB = async () => {
-	const MONGO_URI = `mongodb://${process.env.MONGODB_ROOT_USER}:${process.env.MONGODB_ROOT_USER_PASSWORD}@mongo:${process.env.MONGODB_DOCKER_PORT}/${process.env.MONGODB_DATABASE}`;
+	const MONGO_URI = `${process.env.MONGODB_URI}`;
 
 	await mongoose
 		.connect(MONGO_URI, {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { api } from '../api';
+import { isPdfGenerationEnabled } from '../config';
 
 const BaseUpdateForm = ({
 	formComponent: FormComponent,
@@ -81,6 +82,7 @@ const BaseUpdateForm = ({
 	let handleTemplateChange, handleGeneratePdf, handleGenerateTex, handleOpenOverleaf;
 
 	if (withTemplate) {
+		const pdfGenerationEnabled = isPdfGenerationEnabled;
 		handleTemplateChange = (templateName) => {
 			setSelectedTemplate(templateName);
 		};
@@ -119,7 +121,9 @@ const BaseUpdateForm = ({
 			}
 		};
 
-		handleGeneratePdf = () => handleGenerateFile('pdf');
+		if (pdfGenerationEnabled) {
+			handleGeneratePdf = () => handleGenerateFile('pdf');
+		}
 		handleGenerateTex = () => handleGenerateFile('tex');
 
 		handleOpenOverleaf = async () => {

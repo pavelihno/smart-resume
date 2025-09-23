@@ -10,6 +10,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE $REACT_DOCKER_PORT
+EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

@@ -16,6 +16,20 @@ const TEMPLATE_FOLDER_PATH = path.join(__dirname, '../static/templates/');
 const OUTPUT_TEX_PATH = path.join(__dirname, '../static/temp/output.tex');
 const OUTPUT_PDF_PATH = path.join(__dirname, '../static/temp/output.pdf');
 
+export const PDF_GENERATION_MODES = {
+	LOCAL: 'local',
+	EXTERNAL: 'external',
+	DISABLED: 'disabled',
+};
+
+export const getPdfGenerationMode = () => {
+	return (process.env.REACT_APP_PDF_GENERATION_MODE || PDF_GENERATION_MODES.LOCAL).toLowerCase();
+};
+
+export const isPdfGenerationEnabled = () => getPdfGenerationMode() === PDF_GENERATION_MODES.LOCAL;
+
+export const isLocalPdfEnabled = () => getPdfGenerationMode() === PDF_GENERATION_MODES.LOCAL;
+
 const NAMED_HTML_ENTITIES = {
 	amp: '&',
 	lt: '<',
@@ -109,6 +123,10 @@ export const generatePDF = async (data, categoryName, templateName) => {
 
 	// Save compiled LaTeX content to a .tex file
 	fs.writeFileSync(OUTPUT_TEX_PATH, latexContent);
+
+	if (!isLocalPdfEnabled()) {
+		return { pdfPath: null, texPath: OUTPUT_TEX_PATH };
+	}
 
 	// Write compiled PDF output to file
 	const outputStream = fs.createWriteStream(OUTPUT_PDF_PATH);

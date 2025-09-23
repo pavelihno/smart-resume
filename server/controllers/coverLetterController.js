@@ -1,6 +1,13 @@
 import CoverLetter, { BODY_FORMATS } from '../models/coverLetter.js';
 import Profile from '../models/profile.js';
-import { TEMPLATE_CATEGORIES, listTemplates, generatePDF, escapeLatex } from '../utils/latex.js';
+import {
+	TEMPLATE_CATEGORIES,
+	listTemplates,
+	generatePDF,
+	escapeLatex,
+	isLocalPdfEnabled,
+	getPdfGenerationMode,
+} from '../utils/latex.js';
 import { badRequestError, internalServerError, notFoundError } from '../utils/errors.js';
 
 const decodeHtmlEntities = (value = '') => {
@@ -449,12 +456,22 @@ const generateCoverLetterFile = async (req, res, type) => {
 		}
 
 		const templateName = req.query.template || 'default';
+		if (type === 'pdf' && !isLocalPdfEnabled()) {
+			const pdfMode = getPdfGenerationMode();
+			return badRequestError(
+				res,
+				`PDF generation is disabled because REACT_APP_PDF_GENERATION_MODE="${pdfMode}". Download the TeX file and compile it with Overleaf.`
+			);
+		}
 		const documentPaths = await generatePDF(payload, TEMPLATE_CATEGORIES.LETTER, templateName);
 		const { profile } = payload;
 		const candidate = sanitizeFilenameSegment(profile.name) || 'cover-letter';
 		const role = sanitizeFilenameSegment(payload.coverLetter.position) || 'application';
 		const fileName = `${candidate}. ${role}.${type}`;
 		const filePath = type === 'pdf' ? documentPaths.pdfPath : documentPaths.texPath;
+		if (!filePath) {
+			return internalServerError(res, 'PDF file could not be generated');
+		}
 
 		res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
 		res.status(200).sendFile(filePath, (err) => {

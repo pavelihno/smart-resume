@@ -3,7 +3,13 @@ import ProfileSkill from '../models/profileSkill.js';
 import Skill from '../models/skill.js';
 import CoverLetter from '../models/coverLetter.js';
 import { badRequestError, notFoundError, internalServerError } from '../utils/errors.js';
-import { TEMPLATE_CATEGORIES, listTemplates, generatePDF } from '../utils/latex.js';
+import {
+	TEMPLATE_CATEGORIES,
+	listTemplates,
+	generatePDF,
+	isLocalPdfEnabled,
+	getPdfGenerationMode,
+} from '../utils/latex.js';
 
 const FILE_TYPE = {
 	PDF: 'pdf',
@@ -254,10 +260,20 @@ const generateProfileFile = async (req, res, type) => {
 		}
 
 		const formatedProfile = await getFormattedProfile(profileId);
+		if (type === FILE_TYPE.PDF && !isLocalPdfEnabled()) {
+			const pdfMode = getPdfGenerationMode();
+			return badRequestError(
+				res,
+				`PDF generation is disabled because REACT_APP_PDF_GENERATION_MODE="${pdfMode}". Download the TeX file and compile it with Overleaf.`
+			);
+		}
 
 		const documentPaths = await generatePDF(formatedProfile, TEMPLATE_CATEGORIES.RESUME, req.query.template);
 
 		const filePath = type === FILE_TYPE.PDF ? documentPaths.pdfPath : documentPaths.texPath;
+		if (!filePath) {
+			return internalServerError(res, 'PDF file could not be generated');
+		}
 
 		res.setHeader(
 			'Content-Disposition',
