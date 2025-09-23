@@ -16,11 +16,46 @@ const TEMPLATE_FOLDER_PATH = path.join(__dirname, '../static/templates/');
 const OUTPUT_TEX_PATH = path.join(__dirname, '../static/temp/output.tex');
 const OUTPUT_PDF_PATH = path.join(__dirname, '../static/temp/output.pdf');
 
+const NAMED_HTML_ENTITIES = {
+	amp: '&',
+	lt: '<',
+	gt: '>',
+	quot: '"',
+	apos: "'",
+	nbsp: ' ',
+};
+
+const isSafeString = (value) => {
+	if (!value) {
+		return false;
+	}
+	return value instanceof Handlebars.SafeString || value.constructor?.name === 'SafeString';
+};
+
+const decodeHtmlEntities = (text) => {
+	if (typeof text !== 'string' || text.indexOf('&') === -1) {
+		return text;
+	}
+	return text.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (match, entity) => {
+		if (entity[0] === '#') {
+			const isHex = entity[1]?.toLowerCase() === 'x';
+			const codePoint = parseInt(entity.slice(isHex ? 2 : 1), isHex ? 16 : 10);
+			if (!Number.isNaN(codePoint)) {
+				return String.fromCodePoint(codePoint);
+			}
+			return match;
+		}
+		const replacement = NAMED_HTML_ENTITIES[entity.toLowerCase()];
+		return replacement !== undefined ? replacement : match;
+	});
+};
+
 export const escapeLatex = (text) => {
 	if (typeof text !== 'string') {
 		return text;
 	}
-	return text
+	const normalizedText = decodeHtmlEntities(text);
+	return normalizedText
 		.replace(/\\/g, '\\textbackslash{}')
 		.replace(/%/g, '\\%')
 		.replace(/#/g, '\\#')
@@ -29,14 +64,19 @@ export const escapeLatex = (text) => {
 		.replace(/{/g, '\\{')
 		.replace(/}/g, '\\}')
 		.replace(/&/g, '\\&')
+		.replace(/</g, '\\textless{}')
+		.replace(/>/g, '\\textgreater{}')
 		.replace(/\^/g, '\\textasciicircum{}')
 		.replace(/~/g, '\\textasciitilde{}')
 		.replace(/'/g, '\\textquotesingle{}');
 };
 
 const escapeData = (data) => {
+	if (isSafeString(data)) {
+		return data;
+	}
 	if (typeof data === 'string') {
-		return escapeLatex(data);
+		return new Handlebars.SafeString(escapeLatex(data));
 	} else if (Array.isArray(data)) {
 		return data.map(escapeData);
 	} else if (typeof data === 'object' && data !== null) {
