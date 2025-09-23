@@ -1,66 +1,71 @@
 \documentclass[letterpaper,11pt]{article}
 
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[english]{babel}
 \usepackage{latexsym}
 \usepackage[empty]{fullpage}
 \usepackage{titlesec}
 \usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
 \usepackage{fancyhdr}
-\usepackage{ragged2e}
-\usepackage{microtype}
-\usepackage{parskip}
 \usepackage{tabularx}
-\usepackage[sfdefault]{noto-sans}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
 \input{glyphtounicode}
 
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+\usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
 \pagestyle{fancy}
-\fancyhf{}
+\fancyhf{} % clear all header and footer fields
 \fancyfoot{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
-% Adjust margins similarly to the resume template
+% Adjust margins
 \addtolength{\oddsidemargin}{-0.5in}
 \addtolength{\evensidemargin}{-0.5in}
 \addtolength{\textwidth}{1in}
 \addtolength{\topmargin}{-.5in}
 \addtolength{\textheight}{1.0in}
 
-\setlength{\parskip}{0.85em}
-\setlength{\parindent}{0pt}
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
 \setlength{\tabcolsep}{0in}
 
-\justifying
-\raggedbottom
-\pdfgentounicode=1
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
 
-\titleformat{\section}{\vspace{-4pt}\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
 
 \begin{document}
 
 \begin{center}
-  \textbf{\Huge\scshape {{profile.name}} } \\\[2pt]
-  {{#if profile.title}}
-    \small{ {{profile.title}} } \\\[2pt]
-  {{/if}}
-  {{#if profile.phoneNumbers}}
-    \small{ {{#each profile.phoneNumbers}}\underline{ {{this}} }{{#unless @last}}\, {{/unless}}{{/each}} }\\
-  {{/if}}
-  {{#if profile.emails}}
-    \small{ {{#each profile.emails}}\underline{ {{this}} }{{#unless @last}}\, {{/unless}}{{/each}} }\\
-  {{/if}}
-  {{#if profile.links}}
-    \small{ {{#each profile.links}}\href{ {{this.url}} }{\underline{ {{this.type}} }}{{#unless @last}}\, {{/unless}}{{/each}} }}
-  {{/if}}
+  \textbf{\Huge\scshape {{profile.name}} } \\ \vspace{1pt}
+  {{#each profile.phoneNumbers}} \small{\underline{ {{this}} }}\, {{/each}}
+  {{#each profile.emails}} \small{\underline{ {{this}} }}\, {{/each}}
+  {{#each profile.links}} \small{\href{ {{this.url}} }{\underline{ {{this.type}} }}}\, {{/each}}
 \end{center}
 
-\vspace{12pt}
+\vspace{10pt}
 \rule{\textwidth}{0.4pt}
-\vspace{18pt}
+\vspace{10pt}
 
 \begin{tabularx}{\textwidth}{Xr}
   {{#if coverLetter.senderLocation}}
@@ -72,43 +77,39 @@
   {{/if}} \\
 \end{tabularx}
 
-\vspace{12pt}
+\vspace{30pt}
 
-{{#if coverLetter.company}}
-  \textbf{ {{coverLetter.company}} }\\
-{{/if}}
 {{#if coverLetter.companyRecipient}}
   {{coverLetter.companyRecipient}}\\
 {{/if}}
+
+{{#if coverLetter.company}}
+  {{coverLetter.company}}\\
+{{/if}}
+
 {{#if coverLetter.companyLocation}}
   {{coverLetter.companyLocation}}\\
 {{/if}}
 
+\vspace{20pt}
 {{#if coverLetter.position}}
-  \vspace{16pt}
-  \textbf{Re: {{coverLetter.position}}}\\
+  \textbf{Re: {{coverLetter.position}} }\\
+{{/if}}
+
+\vspace{20pt}
+{{#if coverLetter.salutation}}
+  {{coverLetter.salutation}}
 {{/if}}
 
 \vspace{12pt}
-{{#if coverLetter.salutation}}
-  {{coverLetter.salutation}}
-{{else}}
-  Dear Hiring Manager,
-{{/if}}
-
-\vspace{8pt}
 {{{coverLetter.body}}}
 
-\vspace{18pt}
+\vspace{20pt}
 {{#if coverLetter.closing}}
   {{coverLetter.closing}}\\
-{{else}}
-  Sincerely,\\
 {{/if}}
 
+\vspace{12pt}
 {{profile.name}}\\
-{{#if profile.title}}
-  {{profile.title}}\\
-{{/if}}
 
 \end{document}
