@@ -5,6 +5,9 @@ import Home from './components/Home';
 import ProfileList from './components/profile/ProfileList';
 import CreateProfileForm from './components/profile/CreateProfileForm';
 import UpdateProfileForm from './components/profile/UpdateProfileForm';
+import CoverLetterList from './components/coverLetter/CoverLetterList';
+import CreateCoverLetterForm from './components/coverLetter/CreateCoverLetterForm';
+import UpdateCoverLetterForm from './components/coverLetter/UpdateCoverLetterForm';
 import WorkExperienceList from './components/work_experience/WorkExperienceList';
 import CreateWorkExperienceForm from './components/work_experience/CreateWorkExperienceForm';
 import UpdateWorkExperienceForm from './components/work_experience/UpdateWorkExperienceForm';
@@ -29,6 +32,10 @@ function App() {
 			<Route path='/profiles' element={<ProfileList />} />
 			<Route path='/profiles/new' element={<CreateProfileForm />} />
 			<Route path='/profiles/:id' element={<UpdateProfileForm />} />
+
+			<Route path='/cover-letters' element={<CoverLetterList />} />
+			<Route path='/cover-letters/new' element={<CreateCoverLetterForm />} />
+			<Route path='/cover-letters/:id' element={<UpdateCoverLetterForm />} />
 
 			<Route path='/work-experiences' element={<WorkExperienceList />} />
 			<Route path='/work-experiences/new' element={<CreateWorkExperienceForm />} />

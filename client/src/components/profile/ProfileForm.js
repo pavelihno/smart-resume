@@ -9,6 +9,7 @@ import MultiAutocompleteField from '../../formFields/MultiAutocompleteField';
 
 const ProfileForm = ({
 	profile,
+	handleSubmit: submitProfile,
 	handleDelete,
 	handleGeneratePdf,
 	handleGenerateTex,
@@ -98,8 +99,17 @@ const ProfileForm = ({
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({ ...prevData, [name]: value }));
-		console.error(formData);
-		console.error(skillOptions);
+	};
+
+	const handleFormSubmit = () => {
+		submitProfile?.({
+			...formData,
+			links: formData.links.filter(Boolean),
+			workExperiences: formData.workExperiences.filter(Boolean),
+			educations: formData.educations.filter(Boolean),
+			skills: formData.skills.filter(Boolean),
+			projects: formData.projects.filter(Boolean),
+		});
 	};
 
 	return (
@@ -205,6 +215,7 @@ const ProfileForm = ({
 			handleGenerateTex={handleGenerateTex}
 			handleOpenOverleaf={handleOpenOverleaf}
 			submitButton={submitButton}
+			handleSubmit={handleFormSubmit}
 			isSuccess={isSuccess}
 			successMessage={successMessage}
 			errors={errors}

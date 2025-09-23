@@ -4,7 +4,15 @@ import BaseForm from '../BaseForm';
 import TextFieldInput from '../../formFields/TextFieldInput';
 import BulletedListField from '../../formFields/BulletedListField';
 
-const SkillForm = ({ skill, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
+const SkillForm = ({
+	skill,
+	handleDelete,
+	handleSubmit: submitSkill,
+	isSuccess,
+	successMessage,
+	submitButton,
+	errors,
+}) => {
 	const [formData, setFormData] = useState({
 		title: skill?.title || '',
 		details: skill?.details || [],
@@ -22,6 +30,10 @@ const SkillForm = ({ skill, handleDelete, isSuccess, successMessage, submitButto
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({ ...prevData, [name]: value }));
+	};
+
+	const handleFormSubmit = () => {
+		submitSkill?.(formData);
 	};
 
 	return (
@@ -48,6 +60,7 @@ const SkillForm = ({ skill, handleDelete, isSuccess, successMessage, submitButto
 				</>
 			}
 			handleDelete={handleDelete}
+			handleSubmit={handleFormSubmit}
 			submitButton={submitButton}
 			isSuccess={isSuccess}
 			successMessage={successMessage}

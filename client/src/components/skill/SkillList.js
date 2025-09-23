@@ -48,6 +48,7 @@ const SkillList = () => {
 			rows={skills}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			sortKey='title'
 		/>
 	);
 };

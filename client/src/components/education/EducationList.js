@@ -52,6 +52,7 @@ const EducationList = () => {
 			rows={educations}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			sortKey='institution'
 		/>
 	);
 };

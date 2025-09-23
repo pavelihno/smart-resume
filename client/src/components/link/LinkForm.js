@@ -3,7 +3,15 @@ import React, { useState, useEffect } from 'react';
 import BaseForm from '../BaseForm';
 import TextFieldInput from '../../formFields/TextFieldInput';
 
-const LinkForm = ({ link, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
+const LinkForm = ({
+	link,
+	handleDelete,
+	handleSubmit: submitLink,
+	isSuccess,
+	successMessage,
+	submitButton,
+	errors,
+}) => {
 	const [formData, setFormData] = useState({
 		type: link?.type || '',
 		url: link?.url || '',
@@ -23,6 +31,10 @@ const LinkForm = ({ link, handleDelete, isSuccess, successMessage, submitButton,
 		setFormData((prevData) => ({ ...prevData, [name]: value }));
 	};
 
+	const handleFormSubmit = () => {
+		submitLink?.(formData);
+	};
+
 	return (
 		<BaseForm
 			title='Link'
@@ -33,6 +45,7 @@ const LinkForm = ({ link, handleDelete, isSuccess, successMessage, submitButton,
 				</>
 			}
 			handleDelete={handleDelete}
+			handleSubmit={handleFormSubmit}
 			submitButton={submitButton}
 			isSuccess={isSuccess}
 			successMessage={successMessage}

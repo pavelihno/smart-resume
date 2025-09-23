@@ -52,6 +52,7 @@ const WorkExperienceList = () => {
 			rows={workExperiences}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			sortKey='position'
 		/>
 	);
 };

@@ -18,21 +18,29 @@ import Base from './Base';
 const BaseForm = ({
 	title,
 	formFields,
-	handleDelete,
+	handleDelete = () => {},
 	handleGeneratePdf,
 	handleGenerateTex,
 	handleOpenOverleaf,
 	submitButton,
 	isSuccess,
 	successMessage,
-	errors,
-	templates,
-	selectedTemplate,
-	handleTemplateChange,
+	errors = {},
+	templates = [],
+	selectedTemplate = '',
+	handleTemplateChange = () => {},
+	handleSubmit,
 }) => {
 	const handleDeleteWithConfirmation = () => {
 		if (window.confirm(`${title} will be deleted. Are you sure?`)) {
 			handleDelete();
+		}
+	};
+
+	const onFormSubmit = (event) => {
+		event.preventDefault();
+		if (handleSubmit) {
+			handleSubmit();
 		}
 	};
 
@@ -60,6 +68,8 @@ const BaseForm = ({
 		<Base>
 			<Container component='main' maxWidth='md' sx={{ px: { xs: 0, md: 2 } }}>
 				<Paper
+					component='form'
+					onSubmit={onFormSubmit}
 					elevation={0}
 					sx={{
 						p: { xs: 3, md: 5 },
@@ -176,11 +186,11 @@ const BaseForm = ({
 
 						<Grid item xs={12}>
 							<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-								<Button type='submit' variant='contained' color='primary' size='large'>
+								<Button type='submit' variant='contained' color='primary'>
 									{submitButton}
 								</Button>
 								{submitButton === 'Update' && (
-									<Button variant='outlined' color='secondary' onClick={handleDeleteWithConfirmation}>
+									<Button variant='contained' color='error' onClick={handleDeleteWithConfirmation}>
 										Delete
 									</Button>
 								)}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
 	Table,
 	TableBody,
@@ -59,12 +59,44 @@ const formatCellValue = (value) => {
 	return display === '' ? '—' : display;
 };
 
-const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, createLink }) => {
+const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, createLink, sortKey }) => {
 	const handleDeleteWithConfirmation = (id) => {
 		if (window.confirm('Item will be deleted. Are you sure?')) {
 			handleDelete(id);
 		}
 	};
+
+	const safeRows = Array.isArray(rows) ? rows : [];
+
+	const sortedRows = useMemo(() => {
+		if (!sortKey) {
+			return safeRows;
+		}
+
+		const normalizeValue = (value) => {
+			const display = pickDisplayString(value);
+			return display.trim().toLowerCase();
+		};
+
+		return [...safeRows].sort((a, b) => {
+			const valueA = normalizeValue(a?.[sortKey]);
+			const valueB = normalizeValue(b?.[sortKey]);
+
+			if (valueA === valueB) {
+				return 0;
+			}
+
+			if (valueA === '') {
+				return 1;
+			}
+
+			if (valueB === '') {
+				return -1;
+			}
+
+			return valueA.localeCompare(valueB, undefined, { numeric: true, sensitivity: 'base' });
+		});
+	}, [safeRows, sortKey]);
 
 	return (
 		<Base>
@@ -117,59 +149,45 @@ const BaseList = ({ title, columns, rows, handleEdit, handleDelete, handleCopy, 
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{rows.length === 0 ? (
-									<TableRow>
-										<TableCell
-											colSpan={Object.keys(columns).length + 1}
-											align='center'
-											sx={{ py: 6 }}
-										>
-											<Typography variant='body1' color='text.secondary'>
-												No data yet. Start by adding a new entry.
-											</Typography>
+								{sortedRows.map((row) => (
+									<TableRow key={row._id} hover>
+										{Object.keys(columns).map((key) => (
+											<TableCell key={key} sx={{ verticalAlign: 'top' }}>
+												{formatCellValue(row[key])}
+											</TableCell>
+										))}
+										<TableCell>
+											<Stack direction='row' spacing={1}>
+												<IconButton
+													onClick={() => handleEdit(row._id)}
+													color='primary'
+													size='small'
+													aria-label='Edit'
+												>
+													<EditIcon fontSize='small' />
+												</IconButton>
+												<IconButton
+													onClick={() => handleDeleteWithConfirmation(row._id)}
+													color='secondary'
+													size='small'
+													aria-label='Delete'
+												>
+													<DeleteIcon fontSize='small' />
+												</IconButton>
+												{handleCopy && (
+													<IconButton
+														color='default'
+														size='small'
+														onClick={() => handleCopy(row._id)}
+														aria-label='Copy'
+													>
+														<ContentCopyIcon fontSize='small' />
+													</IconButton>
+												)}
+											</Stack>
 										</TableCell>
 									</TableRow>
-								) : (
-									rows.map((row) => (
-										<TableRow key={row._id} hover>
-											{Object.keys(columns).map((key) => (
-												<TableCell key={key} sx={{ verticalAlign: 'top' }}>
-													{formatCellValue(row[key])}
-												</TableCell>
-											))}
-											<TableCell>
-												<Stack direction='row' spacing={1}>
-													<IconButton
-														onClick={() => handleEdit(row._id)}
-														color='primary'
-														size='small'
-														aria-label='Edit'
-													>
-														<EditIcon fontSize='small' />
-													</IconButton>
-													<IconButton
-														onClick={() => handleDeleteWithConfirmation(row._id)}
-														color='secondary'
-														size='small'
-														aria-label='Delete'
-													>
-														<DeleteIcon fontSize='small' />
-													</IconButton>
-													{handleCopy && (
-														<IconButton
-															color='default'
-															size='small'
-															onClick={() => handleCopy(row._id)}
-															aria-label='Copy'
-														>
-															<ContentCopyIcon fontSize='small' />
-														</IconButton>
-													)}
-												</Stack>
-											</TableCell>
-										</TableRow>
-									))
-								)}
+								))}
 							</TableBody>
 						</Table>
 					</TableContainer>

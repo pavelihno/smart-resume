@@ -47,6 +47,7 @@ const LinkList = () => {
 			rows={links}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			sortKey='type'
 		/>
 	);
 };

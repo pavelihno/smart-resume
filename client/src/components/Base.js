@@ -7,6 +7,7 @@ import theme from '../theme';
 
 const NAV_ITEMS = [
 	{ label: 'Profiles', to: '/profiles' },
+	{ label: 'Cover Letters', to: '/cover-letters' },
 	{ label: 'Experience', to: '/work-experiences' },
 	{ label: 'Education', to: '/educations' },
 	{ label: 'Skills', to: '/skills' },

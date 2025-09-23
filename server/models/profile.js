@@ -42,6 +42,12 @@ const ProfileSchema = new mongoose.Schema(
 				ref: 'Project',
 			},
 		],
+		coverLetters: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'CoverLetter',
+			},
+		],
 	},
 	{ timestamps: true }
 );

@@ -49,6 +49,7 @@ const ProjectList = () => {
 			rows={projects}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			sortKey='title'
 		/>
 	);
 };

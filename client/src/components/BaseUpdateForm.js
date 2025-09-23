@@ -11,6 +11,8 @@ const BaseUpdateForm = ({
 	submitButton,
 	mapDataPropName = 'data',
 	withTemplate = false,
+	templatesEndpoint = 'profiles/templates',
+	resolveDownloadName,
 }) => {
 	const { id } = useParams();
 	const navigate = useNavigate();
@@ -51,15 +53,19 @@ const BaseUpdateForm = ({
 		}
 	};
 
-	const [selectedTemplate, setSelectedTemplate] = useState('');
+	const [selectedTemplate, setSelectedTemplate] = useState(null);
 	const [templates, setTemplates] = useState([]);
 
-	let handleTemplateChange, handleGeneratePdf, handleGenerateTex, handleOpenOverleaf;
+	useEffect(() => {
+		if (!withTemplate) {
+			setTemplates([]);
+			setSelectedTemplate(null);
+			return;
+		}
 
-	if (withTemplate) {
 		const fetchTemplates = async () => {
 			try {
-				const response = await api.get(`profiles/templates`);
+				const response = await api.get(templatesEndpoint);
 				setTemplates(response.data);
 				if (response.data.length > 0) {
 					setSelectedTemplate(response.data[0]);
@@ -69,10 +75,12 @@ const BaseUpdateForm = ({
 			}
 		};
 
-		useEffect(() => {
-			fetchTemplates();
-		}, [endpoint]);
+		fetchTemplates();
+	}, [withTemplate, templatesEndpoint]);
 
+	let handleTemplateChange, handleGeneratePdf, handleGenerateTex, handleOpenOverleaf;
+
+	if (withTemplate) {
 		handleTemplateChange = (templateName) => {
 			setSelectedTemplate(templateName);
 		};
@@ -81,17 +89,22 @@ const BaseUpdateForm = ({
 			setErrors({});
 			try {
 				const response = await api.get(`${endpoint}/${id}/${fileType}`, {
-					params: { template: selectedTemplate },
+					params: { template: selectedTemplate || undefined },
 					responseType: 'blob',
 				});
 
 				const url = window.URL.createObjectURL(response.data);
 				const link = document.createElement('a');
 				link.href = url;
-				link.setAttribute('download', `${entity && entity.name ? entity.name : 'file'}.${fileType}`);
+				const resolvedName =
+					typeof resolveDownloadName === 'function' ? resolveDownloadName(entity) : undefined;
+				const defaultName = entity && entity.name ? entity.name : 'file';
+				const downloadName = (resolvedName || defaultName || 'file').trim();
+				link.setAttribute('download', `${downloadName}.${fileType}`);
 				document.body.appendChild(link);
 				link.click();
 				document.body.removeChild(link);
+				window.URL.revokeObjectURL(url);
 			} catch (error) {
 				if (error.response && error.response.data instanceof Blob) {
 					const errorText = await error.response.data.text();
@@ -113,7 +126,7 @@ const BaseUpdateForm = ({
 			setErrors({});
 			try {
 				const response = await api.get(`${endpoint}/${id}/tex`, {
-					params: { template: selectedTemplate },
+					params: { template: selectedTemplate || undefined },
 					responseType: 'blob',
 				});
 

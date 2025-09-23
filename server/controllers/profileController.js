@@ -1,6 +1,7 @@
 import Profile from '../models/profile.js';
 import ProfileSkill from '../models/profileSkill.js';
 import Skill from '../models/skill.js';
+import CoverLetter from '../models/coverLetter.js';
 import { badRequestError, notFoundError, internalServerError } from '../utils/errors.js';
 import { TEMPLATE_CATEGORIES, listTemplates, generatePDF } from '../utils/latex.js';
 
@@ -50,7 +51,7 @@ export const createProfile = async (req, res) => {
 export const copyProfile = async (req, res) => {
 	try {
 		const originalProfile = await Profile.findById(req.params.id).populate(
-			'workExperiences educations skills projects links'
+			'workExperiences educations skills projects links coverLetters'
 		);
 		if (!originalProfile) {
 			return notFoundError(res, 'Profile not found');
@@ -62,6 +63,7 @@ export const copyProfile = async (req, res) => {
 		delete newProfileData.createdAt;
 		delete newProfileData.updatedAt;
 		delete newProfileData.skills;
+		delete newProfileData.coverLetters;
 
 		const newProfile = new Profile(newProfileData);
 		await newProfile.save();
@@ -93,7 +95,7 @@ export const getProfiles = async (req, res) => {
 export const getProfileById = async (req, res) => {
 	try {
 		const profile = await Profile.findById(req.params.id).populate(
-			'workExperiences educations skills projects links'
+			'workExperiences educations skills projects links coverLetters'
 		);
 		if (!profile) {
 			return notFoundError(res, 'Profile not found');
@@ -144,6 +146,7 @@ export const deleteProfile = async (req, res) => {
 
 		// Delete associated profile skills
 		await ProfileSkill.deleteMany({ profile: profileId });
+		await CoverLetter.deleteMany({ profile: profileId });
 
 		res.status(200).json({ message: 'Profile deleted successfully' });
 	} catch (error) {
@@ -247,7 +250,7 @@ const generateProfileFile = async (req, res, type) => {
 			!profile.projects.length ||
 			!profile.links.length
 		) {
-			return badRequestError('Profile fields cannot be empty');
+			return badRequestError(res, 'Profile fields cannot be empty');
 		}
 
 		const formatedProfile = await getFormattedProfile(profileId);

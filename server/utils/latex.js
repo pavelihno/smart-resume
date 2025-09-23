@@ -16,7 +16,7 @@ const TEMPLATE_FOLDER_PATH = path.join(__dirname, '../static/templates/');
 const OUTPUT_TEX_PATH = path.join(__dirname, '../static/temp/output.tex');
 const OUTPUT_PDF_PATH = path.join(__dirname, '../static/temp/output.pdf');
 
-const escapeLatex = (text) => {
+export const escapeLatex = (text) => {
 	if (typeof text !== 'string') {
 		return text;
 	}
@@ -40,6 +40,9 @@ const escapeData = (data) => {
 	} else if (Array.isArray(data)) {
 		return data.map(escapeData);
 	} else if (typeof data === 'object' && data !== null) {
+		if (data.__raw) {
+			return new Handlebars.SafeString(data.value ?? '');
+		}
 		const escapedData = {};
 		for (const key in data) {
 			if (data.hasOwnProperty(key)) {

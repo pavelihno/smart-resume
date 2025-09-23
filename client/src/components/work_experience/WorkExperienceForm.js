@@ -5,7 +5,15 @@ import TextFieldInput from '../../formFields/TextFieldInput';
 import BulletedListField from '../../formFields/BulletedListField';
 import DatePickerField from '../../formFields/DatePickerField';
 
-const WorkExperienceForm = ({ workExperience, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
+const WorkExperienceForm = ({
+	workExperience,
+	handleDelete,
+	handleSubmit: submitWorkExperience,
+	isSuccess,
+	successMessage,
+	submitButton,
+	errors,
+}) => {
 	const [formData, setFormData] = useState({
 		position: workExperience?.position || '',
 		company: workExperience?.company || '',
@@ -37,6 +45,10 @@ const WorkExperienceForm = ({ workExperience, handleDelete, isSuccess, successMe
 
 	const handleDateChange = (name, date) => {
 		setFormData((prevData) => ({ ...prevData, [name]: date }));
+	};
+
+	const handleFormSubmit = () => {
+		submitWorkExperience?.(formData);
 	};
 
 	return (
@@ -87,6 +99,7 @@ const WorkExperienceForm = ({ workExperience, handleDelete, isSuccess, successMe
 				</>
 			}
 			handleDelete={handleDelete}
+			handleSubmit={handleFormSubmit}
 			submitButton={submitButton}
 			isSuccess={isSuccess}
 			successMessage={successMessage}

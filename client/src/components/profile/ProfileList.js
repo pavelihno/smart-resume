@@ -59,6 +59,7 @@ const ProfileList = () => {
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
 			handleCopy={handleCopy}
+			sortKey='title'
 		/>
 	);
 };

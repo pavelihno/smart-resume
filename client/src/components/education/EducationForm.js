@@ -4,7 +4,15 @@ import BaseForm from '../BaseForm';
 import TextFieldInput from '../../formFields/TextFieldInput';
 import DatePickerField from '../../formFields/DatePickerField';
 
-const EducationForm = ({ education, handleDelete, isSuccess, successMessage, submitButton, errors }) => {
+const EducationForm = ({
+	education,
+	handleDelete,
+	handleSubmit: submitEducation,
+	isSuccess,
+	successMessage,
+	submitButton,
+	errors,
+}) => {
 	const [formData, setFormData] = useState({
 		institution: education?.institution || '',
 		educationLevel: education?.educationLevel || '',
@@ -38,6 +46,10 @@ const EducationForm = ({ education, handleDelete, isSuccess, successMessage, sub
 
 	const handleDateChange = (name, date) => {
 		setFormData((prevData) => ({ ...prevData, [name]: date }));
+	};
+
+	const handleFormSubmit = () => {
+		submitEducation?.(formData);
 	};
 
 	return (
@@ -101,6 +113,7 @@ const EducationForm = ({ education, handleDelete, isSuccess, successMessage, sub
 				</>
 			}
 			handleDelete={handleDelete}
+			handleSubmit={handleFormSubmit}
 			submitButton={submitButton}
 			isSuccess={isSuccess}
 			successMessage={successMessage}
