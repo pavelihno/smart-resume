@@ -44,7 +44,7 @@ can send directly to recruiters.
     The first run downloads Docker images, so it can take several minutes—watch for the `react`, `express`, and `mongo` containers
     to report `Started` in the logs.
 5. **Use the app**
-    - Web client: <http://localhost> (served on port 80, forwarded to the React app on 3000)
+    - Web client: <http://localhost> (served on port 80)
     - API (for debugging or integrations): <http://localhost:8080>
     - Optional database UI: uncomment the `mongo-express` block in `docker-compose.yml` and browse to <http://localhost:8081>
 
@@ -61,7 +61,6 @@ All configuration lives in the root `.env` file and is automatically shared with
 | ------------------------------- | -------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `NODE_ENV`                      | ✅       | `production`                                      | Chooses the Dockerfile for the React client. Use `production` for normal usage and switch to `development` only when modifying the front end (see below). |
 | `REACT_APP_PDF_GENERATION_MODE` | ✅       | `local` or `external`                             | Controls how PDFs are produced (explained in the next section).                                                                                           |
-| `REACT_APP_SERVER_URL`          | ✅       | `http://localhost:8080`                           | Base URL the client uses to reach the Express API. Keep the protocol; the example `.env` omits it, so add it when editing.                                |
 | `MONGODB_DATABASE`              | ✅       | `smart_resume_db`                                 | Name of the MongoDB database that stores your data.                                                                                                       |
 | `MONGODB_ROOT_USER`             | ✅       | `root`                                            | Administrative MongoDB username used by the Docker image during initialization.                                                                           |
 | `MONGODB_ROOT_USER_PASSWORD`    | ✅       | `root`                                            | Password for the root MongoDB user. Change this in production deployments.                                                                                |

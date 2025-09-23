@@ -1,20 +1,20 @@
 services:
 
-  react:
-    container_name: react
+  smart-resume-client:
+    container_name: smart-resume-client
     build:
       context: ./client
       dockerfile: 'Dockerfile.${NODE_ENV}'
     ports:
-      - 80:3000
+      - 80:80
       - 3000:3000
     env_file:
       - .env
     depends_on:
-      - express
+      - smart-resume-server
 
-  express:
-    container_name: express
+  smart-resume-server:
+    container_name: smart-resume-server
     build:
       context: ./server
       dockerfile: 'Dockerfile.${REACT_APP_PDF_GENERATION_MODE}'
@@ -36,7 +36,7 @@ services:
       - MONGO_INITDB_DATABASE=${MONGODB_DATABASE}
     volumes:
       - ./db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - ./db/tmp:/data/db
+      - mongo_data:/data/db
 
   # mongo-express:
   #   image: mongo-express
@@ -54,3 +54,6 @@ services:
   #     - ME_CONFIG_BASICAUTH_PASSWORD=$MONGODB_BASIC_USER_PASSWORD
   #   depends_on:
   #     - mongo
+
+volumes:
+  mongo_data:

@@ -1,4 +1,4 @@
-\documentclass[letterpaper,11pt]{article}
+\documentclass[a4paper,11pt]{letter}
 
 \usepackage{latexsym}
 \usepackage[empty]{fullpage}
@@ -12,6 +12,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
+\usepackage{changepage}
 \input{glyphtounicode}
 
 
@@ -67,17 +68,23 @@
 \rule{\textwidth}{0.4pt}
 \vspace{10pt}
 
-\begin{tabularx}{\textwidth}{Xr}
-  {{#if coverLetter.senderLocation}}
-    {{coverLetter.senderLocation}}
-  {{/if}}
-  &
-  {{#if coverLetter.sentAt}}
-    {{coverLetter.sentAt}}
-  {{/if}} \\
-\end{tabularx}
+\newlength{\lettercontentmargin}
+\setlength{\lettercontentmargin}{0.4in}
+\addtolength{\leftmargin}{\lettercontentmargin}
+\addtolength{\rightmargin}{\lettercontentmargin}
+\begin{adjustwidth}{\lettercontentmargin}{\lettercontentmargin}
 
-\vspace{30pt}
+\begin{flushright}
+  {{#if coverLetter.senderLocation}}
+    {{coverLetter.senderLocation}}\\
+  {{/if}}
+  {{#if coverLetter.sentAt}}
+    \vspace{12pt}
+    {{coverLetter.sentAt}}\\
+  {{/if}}
+\end{flushright}
+
+\vspace{20pt}
 
 {{#if coverLetter.companyRecipient}}
   {{coverLetter.companyRecipient}}\\
@@ -112,4 +119,5 @@
 \vspace{12pt}
 {{profile.name}}\\
 
+\end{adjustwidth}
 \end{document}
