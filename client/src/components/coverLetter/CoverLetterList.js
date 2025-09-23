@@ -12,7 +12,8 @@ const formatSentDate = (dateString) => {
 	if (Number.isNaN(date.getTime())) {
 		return '';
 	}
-	return date.toLocaleDateString();
+	const pad = (value) => String(value).padStart(2, '0');
+	return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
 };
 
 const CoverLetterList = () => {
@@ -57,9 +58,19 @@ const CoverLetterList = () => {
 		}
 	};
 
+	const handleCopy = async (id) => {
+		setErrors({});
+		try {
+			const response = await api.post(`/cover-letters/${id}/copy`);
+			setCoverLetters((prev) => [...prev, response.data]);
+		} catch (error) {
+			setErrors(error.response?.data || { message: 'Failed to copy cover letter' });
+		}
+	};
+
 	const columns = {
-		position: 'Position',
 		company: 'Company',
+		position: 'Position',
 		profileName: 'Profile',
 		formattedSentAt: 'Sent',
 		bodyFormat: 'Format',
@@ -73,6 +84,8 @@ const CoverLetterList = () => {
 			rows={rows}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			handleCopy={handleCopy}
+			sortKey='company'
 		/>
 	);
 };

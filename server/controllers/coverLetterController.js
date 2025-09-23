@@ -323,6 +323,34 @@ export const createCoverLetter = async (req, res) => {
 	}
 };
 
+export const copyCoverLetter = async (req, res) => {
+	try {
+		const originalCoverLetter = await CoverLetter.findById(req.params.id);
+		if (!originalCoverLetter) {
+			return notFoundError(res, 'Cover letter not found');
+		}
+
+		const cloneData = originalCoverLetter.toObject();
+		cloneData.position = cloneData.position ? `${cloneData.position} (Copy)` : 'Cover letter (Copy)';
+		delete cloneData._id;
+		delete cloneData.createdAt;
+		delete cloneData.updatedAt;
+
+		const duplicatedCoverLetter = new CoverLetter(cloneData);
+		await duplicatedCoverLetter.save();
+		await addCoverLetterToProfile(duplicatedCoverLetter.profile, duplicatedCoverLetter._id);
+
+		const populatedCoverLetter = await CoverLetter.findById(duplicatedCoverLetter._id).populate({
+			path: 'profile',
+			select: 'name title phoneNumbers emails',
+		});
+
+		return res.status(201).json(populatedCoverLetter);
+	} catch (error) {
+		return internalServerError(res, error.message);
+	}
+};
+
 export const getCoverLetters = async (req, res) => {
 	try {
 		const filter = {};

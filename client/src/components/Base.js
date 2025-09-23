@@ -44,7 +44,27 @@ const Base = ({ children }) => {
 						<Button
 							component={Link}
 							to='/'
-							startIcon={<img src='/images/logo.png' alt='Logo' width='42' height='42' />}
+							startIcon={
+								<Box
+									sx={{
+										backgroundColor: '#fff',
+										borderRadius: '50%',
+										width: 42,
+										height: 42,
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+									}}
+								>
+									<img
+										src='/images/logo.png'
+										alt='Logo'
+										width='32'
+										height='32'
+										style={{ display: 'block' }}
+									/>
+								</Box>
+							}
 							sx={{
 								color: '#fff',
 								fontWeight: 700,

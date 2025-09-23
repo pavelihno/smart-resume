@@ -184,19 +184,6 @@ const BaseForm = ({
 
 						{formFields}
 
-						<Grid item xs={12}>
-							<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-								<Button type='submit' variant='contained' color='primary'>
-									{submitButton}
-								</Button>
-								{submitButton === 'Update' && (
-									<Button variant='contained' color='error' onClick={handleDeleteWithConfirmation}>
-										Delete
-									</Button>
-								)}
-							</Stack>
-						</Grid>
-
 						{isSuccess && (
 							<Grid item xs={12}>
 								<Alert severity='success' variant='outlined'>
@@ -214,6 +201,19 @@ const BaseForm = ({
 								</Alert>
 							</Grid>
 						)}
+
+						<Grid item xs={12}>
+							<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+								<Button type='submit' variant='contained' color='primary'>
+									{submitButton}
+								</Button>
+								{submitButton === 'Update' && (
+									<Button variant='contained' color='error' onClick={handleDeleteWithConfirmation}>
+										Delete
+									</Button>
+								)}
+							</Stack>
+						</Grid>
 					</Grid>
 				</Paper>
 			</Container>

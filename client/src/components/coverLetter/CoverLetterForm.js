@@ -113,7 +113,7 @@ const CoverLetterForm = ({
 			closing: formData.closing.trim(),
 			body: formData.body,
 			bodyFormat: formData.bodyFormat,
-			sentAt: formData.sentAt,
+			sentAt: formData.sentAt ? formData.sentAt.toISOString() : null,
 		});
 	};
 
@@ -169,7 +169,7 @@ const CoverLetterForm = ({
 						options={profileOptions}
 						value={selectedProfile}
 						onChange={handleProfileChange}
-						getOptionLabel={(option) => option?.name || ''}
+						getOptionLabel={(option) => `${option?.name} (${option.title})` || ''}
 						isOptionEqualToValue={(option, value) => option?._id === value?._id}
 						fullWidth
 					/>
@@ -213,7 +213,6 @@ const CoverLetterForm = ({
 						onChange={handleChange}
 					/>
 					<TextFieldInput label='Closing' name='closing' value={formData.closing} onChange={handleChange} />
-					{renderBodyField()}
 					<Grid item xs={12}>
 						<TextField
 							select
@@ -231,7 +230,14 @@ const CoverLetterForm = ({
 							))}
 						</TextField>
 					</Grid>
-					<DatePickerField label='Date' value={formData.sentAt} onChange={handleDateChange} />
+					{renderBodyField()}
+					<DatePickerField
+						required
+						label='Date'
+						value={formData.sentAt}
+						onChange={handleDateChange}
+						dateFormat='dd.MM.yyyy'
+					/>
 				</>
 			}
 			handleSubmit={handleFormSubmit}

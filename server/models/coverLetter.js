@@ -52,6 +52,7 @@ const CoverLetterSchema = new mongoose.Schema(
 		},
 		sentAt: {
 			type: Date,
+			required: true,
 		},
 	},
 	{ timestamps: true }
