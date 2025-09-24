@@ -6,7 +6,8 @@ import { badRequestError, notFoundError, internalServerError } from '../utils/er
 import {
 	TEMPLATE_CATEGORIES,
 	listTemplates,
-	generatePDF,
+	generateLatexFile,
+	compilePdfFromLatex,
 	isLocalPdfEnabled,
 	getPdfGenerationMode,
 } from '../utils/latex.js';
@@ -268,11 +269,16 @@ const generateProfileFile = async (req, res, type) => {
 			);
 		}
 
-		const documentPaths = await generatePDF(formatedProfile, TEMPLATE_CATEGORIES.RESUME, req.query.template);
+		const templateName = req.query.template || 'default';
+		const { latexContent, texPath } = generateLatexFile(formatedProfile, TEMPLATE_CATEGORIES.RESUME, templateName);
 
-		const filePath = type === FILE_TYPE.PDF ? documentPaths.pdfPath : documentPaths.texPath;
-		if (!filePath) {
-			return internalServerError(res, 'PDF file could not be generated');
+		let filePath = texPath;
+		if (type === FILE_TYPE.PDF) {
+			const pdfPath = await compilePdfFromLatex(latexContent);
+			if (!pdfPath) {
+				return internalServerError(res, 'PDF file could not be generated');
+			}
+			filePath = pdfPath;
 		}
 
 		res.setHeader(

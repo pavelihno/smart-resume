@@ -64,7 +64,6 @@
   {{#each profile.links}} \small{\href{ {{this.url}} }{\underline{ {{this.type}} }}}\, {{/each}}
 \end{center}
 
-\vspace{10pt}
 \rule{\textwidth}{0.4pt}
 \vspace{10pt}
 
@@ -75,46 +74,46 @@
 \begin{adjustwidth}{\lettercontentmargin}{\lettercontentmargin}
 
 \begin{flushright}
-  {{#if coverLetter.senderLocation}}
+  {{#hasText coverLetter.senderLocation}}
     {{coverLetter.senderLocation}}\\
-  {{/if}}
-  {{#if coverLetter.sentAt}}
+  {{/hasText}}
+  {{#hasText coverLetter.sentAt}}
     \vspace{12pt}
     {{coverLetter.sentAt}}\\
-  {{/if}}
+  {{/hasText}}
 \end{flushright}
 
 \vspace{20pt}
 
-{{#if coverLetter.companyRecipient}}
+{{#hasText coverLetter.companyRecipient}}
   {{coverLetter.companyRecipient}}\\
-{{/if}}
+{{/hasText}}
 
-{{#if coverLetter.company}}
+{{#hasText coverLetter.company}}
   {{coverLetter.company}}\\
-{{/if}}
+{{/hasText}}
 
-{{#if coverLetter.companyLocation}}
+{{#hasText coverLetter.companyLocation}}
   {{coverLetter.companyLocation}}\\
-{{/if}}
+{{/hasText}}
 
 \vspace{20pt}
-{{#if coverLetter.position}}
+{{#hasText coverLetter.position}}
   \textbf{Re: {{coverLetter.position}} }\\
-{{/if}}
+{{/hasText}}
 
 \vspace{20pt}
-{{#if coverLetter.salutation}}
+{{#hasText coverLetter.salutation}}
   {{coverLetter.salutation}}
-{{/if}}
+{{/hasText}}
 
 \vspace{12pt}
 {{{coverLetter.body}}}
 
 \vspace{20pt}
-{{#if coverLetter.closing}}
+{{#hasText coverLetter.closing}}
   {{coverLetter.closing}}\\
-{{/if}}
+{{/hasText}}
 
 \vspace{12pt}
 {{profile.name}}\\

@@ -19,7 +19,6 @@ const OUTPUT_PDF_PATH = path.join(__dirname, '../static/temp/output.pdf');
 export const PDF_GENERATION_MODES = {
 	LOCAL: 'local',
 	EXTERNAL: 'external',
-	DISABLED: 'disabled',
 };
 
 export const getPdfGenerationMode = () => {
@@ -85,6 +84,23 @@ export const escapeLatex = (text) => {
 		.replace(/'/g, '\\textquotesingle{}');
 };
 
+Handlebars.registerHelper('hasText', function (value, options) {
+	let text = '';
+	if (isSafeString(value)) {
+		text = value.toString();
+	} else if (typeof value === 'string') {
+		text = value;
+	} else if (value == null) {
+		text = '';
+	} else {
+		text = String(value);
+	}
+	if (text.trim().length > 0) {
+		return options.fn(this);
+	}
+	return options.inverse(this);
+});
+
 const escapeData = (data) => {
 	if (isSafeString(data)) {
 		return data;
@@ -109,26 +125,19 @@ const escapeData = (data) => {
 	}
 };
 
-export const generatePDF = async (data, categoryName, templateName) => {
-	// Read LaTeX template
+export const generateLatexFile = (data, categoryName, templateName) => {
 	const templatePath = path.join(TEMPLATE_FOLDER_PATH, categoryName, `${templateName}.tex`);
 	const templateContent = fs.readFileSync(templatePath, 'utf8');
-
-	// Escape profile data
 	const escapedData = escapeData(data);
-
-	// Compile template using Handlebars
 	const template = Handlebars.compile(templateContent);
 	const latexContent = template(escapedData);
 
-	// Save compiled LaTeX content to a .tex file
 	fs.writeFileSync(OUTPUT_TEX_PATH, latexContent);
 
-	if (!isLocalPdfEnabled()) {
-		return { pdfPath: null, texPath: OUTPUT_TEX_PATH };
-	}
+	return { latexContent, texPath: OUTPUT_TEX_PATH };
+};
 
-	// Write compiled PDF output to file
+export const compilePdfFromLatex = async (latexContent) => {
 	const outputStream = fs.createWriteStream(OUTPUT_PDF_PATH);
 
 	return new Promise((resolve, reject) => {
@@ -145,9 +154,21 @@ export const generatePDF = async (data, categoryName, templateName) => {
 
 		outputStream.on('finish', () => {
 			console.log('PDF successfully generated');
-			resolve({ pdfPath: OUTPUT_PDF_PATH, texPath: OUTPUT_TEX_PATH });
+			resolve(OUTPUT_PDF_PATH);
 		});
 	});
+};
+
+export const generatePDF = async (data, categoryName, templateName) => {
+	const { latexContent, texPath } = generateLatexFile(data, categoryName, templateName);
+
+	if (!isLocalPdfEnabled()) {
+		return { pdfPath: null, texPath };
+	}
+
+	const pdfPath = await compilePdfFromLatex(latexContent);
+
+	return { pdfPath, texPath };
 };
 
 export const listTemplates = (categoryName) => {

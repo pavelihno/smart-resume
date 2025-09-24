@@ -207,12 +207,19 @@ const CoverLetterForm = ({
 						onChange={handleChange}
 					/>
 					<TextFieldInput
+						required
 						label='Salutation'
 						name='salutation'
 						value={formData.salutation}
 						onChange={handleChange}
 					/>
-					<TextFieldInput label='Closing' name='closing' value={formData.closing} onChange={handleChange} />
+					<TextFieldInput
+						required
+						label='Closing'
+						name='closing'
+						value={formData.closing}
+						onChange={handleChange}
+					/>
 					<Grid item xs={12}>
 						<TextField
 							select
@@ -233,7 +240,8 @@ const CoverLetterForm = ({
 					{renderBodyField()}
 					<DatePickerField
 						required
-						label='Date'
+						label='Sent Date'
+						name='sentAt'
 						value={formData.sentAt}
 						onChange={handleDateChange}
 						dateFormat='dd.MM.yyyy'

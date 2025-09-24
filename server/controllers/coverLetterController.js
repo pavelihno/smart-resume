@@ -3,7 +3,8 @@ import Profile from '../models/profile.js';
 import {
 	TEMPLATE_CATEGORIES,
 	listTemplates,
-	generatePDF,
+	generateLatexFile,
+	compilePdfFromLatex,
 	escapeLatex,
 	isLocalPdfEnabled,
 	getPdfGenerationMode,
@@ -463,12 +464,20 @@ const generateCoverLetterFile = async (req, res, type) => {
 				`PDF generation is disabled because REACT_APP_PDF_GENERATION_MODE="${pdfMode}". Download the TeX file and compile it with Overleaf.`
 			);
 		}
-		const documentPaths = await generatePDF(payload, TEMPLATE_CATEGORIES.LETTER, templateName);
+
+		const { latexContent, texPath } = generateLatexFile(payload, TEMPLATE_CATEGORIES.LETTER, templateName);
 		const { profile } = payload;
 		const candidate = sanitizeFilenameSegment(profile.name) || 'cover-letter';
 		const role = sanitizeFilenameSegment(payload.coverLetter.position) || 'application';
 		const fileName = `${candidate}. ${role}.${type}`;
-		const filePath = type === 'pdf' ? documentPaths.pdfPath : documentPaths.texPath;
+		let filePath = texPath;
+		if (type === 'pdf') {
+			const pdfPath = await compilePdfFromLatex(latexContent);
+			if (!pdfPath) {
+				return internalServerError(res, 'PDF file could not be generated');
+			}
+			filePath = pdfPath;
+		}
 		if (!filePath) {
 			return internalServerError(res, 'PDF file could not be generated');
 		}
