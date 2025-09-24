@@ -44,7 +44,7 @@ can send directly to recruiters.
     The first run downloads Docker images, so it can take several minutes—watch for the `react`, `express`, and `mongo` containers
     to report `Started` in the logs.
 5. **Use the app**
-    - Web client: <http://localhost> (served on port 80)
+    - Web client: <http://localhost> (production build on port 80) or <http://localhost:3000> when the React dev server is active
     - API (for debugging or integrations): <http://localhost:8080>
     - Optional database UI: uncomment the `mongo-express` block in `docker-compose.yml` and browse to <http://localhost:8081>
 
@@ -59,8 +59,8 @@ All configuration lives in the root `.env` file and is automatically shared with
 
 | Variable                        | Required | Recommended Value                                 | Description                                                                                                                                               |
 | ------------------------------- | -------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `NODE_ENV`                      | ✅       | `production`                                      | Chooses the Dockerfile for the React client. Use `production` for normal usage and switch to `development` only when modifying the front end (see below). |
-| `REACT_APP_PDF_GENERATION_MODE` | ✅       | `local` or `external`                             | Controls how PDFs are produced (explained in the next section).                                                                                           |
+| `NODE_ENV`                      | ✅       | `production`                                      | Selects `client/Dockerfile.production` (Nginx on port 80) or `client/Dockerfile.development` (React dev server on port 3000). Switch to `development` only when working on the front end. |
+| `REACT_APP_PDF_GENERATION_MODE` | ✅       | `local` or `external`                             | Chooses between `server/Dockerfile.local.*` and `server/Dockerfile.external.*` builds and controls how PDFs are produced (explained in the next section). |
 | `MONGODB_DATABASE`              | ✅       | `smart_resume_db`                                 | Name of the MongoDB database that stores your data.                                                                                                       |
 | `MONGODB_ROOT_USER`             | ✅       | `root`                                            | Administrative MongoDB username used by the Docker image during initialization.                                                                           |
 | `MONGODB_ROOT_USER_PASSWORD`    | ✅       | `root`                                            | Password for the root MongoDB user. Change this in production deployments.                                                                                |
@@ -71,6 +71,12 @@ All configuration lives in the root `.env` file and is automatically shared with
 
 > ✅ **Tip:** After editing `.env`, save the file and restart your containers (`docker-compose up`) so changes take effect.
 
+### Dockerfile Matrix & Ports
+
+-   The client image always publishes ports 80 and 3000; only the port that matches `NODE_ENV` actually serves traffic.
+-   The server resolves its Dockerfile dynamically as `server/Dockerfile.${REACT_APP_PDF_GENERATION_MODE}.${NODE_ENV}`, giving you four combinations to mix PDF strategy and runtime mode.
+-   Changing either variable updates the Dockerfile path, so run `docker-compose build` after edits to rebuild the correct image.
+
 ---
 
 ## 🖨️ Local vs. External PDF Generation
@@ -79,8 +85,13 @@ The app supports two PDF generation strategies so you can pick what fits your en
 
 | Mode                | Set `REACT_APP_PDF_GENERATION_MODE` to… | How it works                                                                                                                                                                         | When to choose it                                                                                                           |
 | ------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| **Local (default)** | `local`                                 | The Express server renders your data into a LaTeX template and immediately compiles it into a PDF inside the Docker container using `node-latex`.                                    | You want instant PDFs without leaving the app. This is the easiest option—just download and share the result.               |
-| **External**        | `external`                              | The server still creates the `.tex` file but skips PDF compilation. The client offers you the LaTeX source to download, so you can upload it to Overleaf or run `pdflatex` manually. | Your machine cannot run LaTeX reliably, or you want full control of the build process (e.g., custom fonts or CI pipelines). |
+| **Local (default)** | `local`                                 | The Express server renders your data into a LaTeX template and immediately compiles it into a PDF inside the Docker container using `node-latex`; this bundles the full TeX Live toolchain so images are heavier and builds take longer. | You want instant PDFs without leaving the app and do not mind larger Docker images. This is the easiest option—just download and share the result. |
+| **External**        | `external`                              | The server still creates the `.tex` file but skips PDF compilation, so the container stays lean (no TeX packages). The client offers you the LaTeX source to download for Overleaf or manual `pdflatex` runs. | Your machine cannot run LaTeX reliably, you need custom build flags, or you want the smallest possible container footprint. |
+
+### Pros & Cons Quick Take
+
+-   **Local PDFs** – Consistent output with no extra tooling, at the cost of ~1–2 GB larger images and slightly slower cold starts.
+-   **External PDFs** – Light images and faster deploys, but you handle LaTeX yourself and PDF downloads are disabled inside the UI.
 
 When external mode is enabled, the Download PDF buttons in the UI will explain that PDFs are disabled and point you to the `.tex`
 file instead.
