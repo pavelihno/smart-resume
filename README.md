@@ -1,6 +1,6 @@
 # Smart Resume
 
-Smart Resume helps you craft consistent résumés and cover letters from a single profile. The app stores your professional
+Smart Resume helps you craft consistent resumes and cover letters from a single profile. The app stores your professional
 information in MongoDB, lets you tweak document templates from the web UI, and exports polished PDFs (or LaTeX files) that you
 can send directly to recruiters.
 
@@ -10,7 +10,7 @@ can send directly to recruiters.
 
 -   **Profile once, reuse everywhere** – Add your details, projects, and experience in the web dashboard and reuse them across
     different document templates.
--   **Résumé & cover letter builder** – Switch between predefined LaTeX templates to generate résumés and tailored cover letters.
+-   **resume & cover letter builder** – Switch between predefined LaTeX templates to generate resumes and tailored cover letters.
 -   **PDF or LaTeX exports** – Let the app compile a PDF for you (local mode) or grab the `.tex` source if you prefer compiling in
     Overleaf or another LaTeX tool (external mode).
 -   **Docker-first workflow** – All services (React client, Express API, MongoDB) are containerized so you do not need Node.js or
@@ -57,17 +57,17 @@ code or dependencies change).
 
 All configuration lives in the root `.env` file and is automatically shared with every container.
 
-| Variable                        | Required | Recommended Value                                 | Description                                                                                                                                               |
-| ------------------------------- | -------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Variable                        | Required | Recommended Value                                 | Description                                                                                                                                                                               |
+| ------------------------------- | -------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `NODE_ENV`                      | ✅       | `production`                                      | Selects `client/Dockerfile.production` (Nginx on port 80) or `client/Dockerfile.development` (React dev server on port 3000). Switch to `development` only when working on the front end. |
-| `REACT_APP_PDF_GENERATION_MODE` | ✅       | `local` or `external`                             | Chooses between `server/Dockerfile.local.*` and `server/Dockerfile.external.*` builds and controls how PDFs are produced (explained in the next section). |
-| `MONGODB_DATABASE`              | ✅       | `smart_resume_db`                                 | Name of the MongoDB database that stores your data.                                                                                                       |
-| `MONGODB_ROOT_USER`             | ✅       | `root`                                            | Administrative MongoDB username used by the Docker image during initialization.                                                                           |
-| `MONGODB_ROOT_USER_PASSWORD`    | ✅       | `root`                                            | Password for the root MongoDB user. Change this in production deployments.                                                                                |
-| `MONGODB_BASIC_USER`            | ✅       | `user`                                            | Read/write user created for the application.                                                                                                              |
-| `MONGODB_BASIC_USER_PASSWORD`   | ✅       | `12345678`                                        | Password for the basic MongoDB user. Modify for security.                                                                                                 |
-| `MONGODB_URI`                   | ✅       | `mongodb://root:root@mongo:27017/smart_resume_db` | Connection string the Express server uses. If you rename users/passwords, update this string too.                                                         |
-| `TZ`                            | ➖       | `UTC`                                             | Time zone applied inside containers (helps keep generated documents consistent).                                                                          |
+| `REACT_APP_PDF_GENERATION_MODE` | ✅       | `local` or `external`                             | Chooses between `server/Dockerfile.local.*` and `server/Dockerfile.external.*` builds and controls how PDFs are produced (explained in the next section).                                 |
+| `MONGODB_DATABASE`              | ✅       | `smart_resume_db`                                 | Name of the MongoDB database that stores your data.                                                                                                                                       |
+| `MONGODB_ROOT_USER`             | ✅       | `root`                                            | Administrative MongoDB username used by the Docker image during initialization.                                                                                                           |
+| `MONGODB_ROOT_USER_PASSWORD`    | ✅       | `root`                                            | Password for the root MongoDB user. Change this in production deployments.                                                                                                                |
+| `MONGODB_BASIC_USER`            | ✅       | `user`                                            | Read/write user created for the application.                                                                                                                                              |
+| `MONGODB_BASIC_USER_PASSWORD`   | ✅       | `12345678`                                        | Password for the basic MongoDB user. Modify for security.                                                                                                                                 |
+| `MONGODB_URI`                   | ✅       | `mongodb://root:root@mongo:27017/smart_resume_db` | Connection string the Express server uses. If you rename users/passwords, update this string too.                                                                                         |
+| `TZ`                            | ➖       | `UTC`                                             | Time zone applied inside containers (helps keep generated documents consistent).                                                                                                          |
 
 > ✅ **Tip:** After editing `.env`, save the file and restart your containers (`docker-compose up`) so changes take effect.
 
@@ -83,10 +83,10 @@ All configuration lives in the root `.env` file and is automatically shared with
 
 The app supports two PDF generation strategies so you can pick what fits your environment:
 
-| Mode                | Set `REACT_APP_PDF_GENERATION_MODE` to… | How it works                                                                                                                                                                         | When to choose it                                                                                                           |
-| ------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Mode                | Set `REACT_APP_PDF_GENERATION_MODE` to… | How it works                                                                                                                                                                                                                             | When to choose it                                                                                                                                  |
+| ------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Local (default)** | `local`                                 | The Express server renders your data into a LaTeX template and immediately compiles it into a PDF inside the Docker container using `node-latex`; this bundles the full TeX Live toolchain so images are heavier and builds take longer. | You want instant PDFs without leaving the app and do not mind larger Docker images. This is the easiest option—just download and share the result. |
-| **External**        | `external`                              | The server still creates the `.tex` file but skips PDF compilation, so the container stays lean (no TeX packages). The client offers you the LaTeX source to download for Overleaf or manual `pdflatex` runs. | Your machine cannot run LaTeX reliably, you need custom build flags, or you want the smallest possible container footprint. |
+| **External**        | `external`                              | The server still creates the `.tex` file but skips PDF compilation, so the container stays lean (no TeX packages). The client offers you the LaTeX source to download for Overleaf or manual `pdflatex` runs.                            | Your machine cannot run LaTeX reliably, you need custom build flags, or you want the smallest possible container footprint.                        |
 
 ### Pros & Cons Quick Take
 
@@ -119,7 +119,7 @@ Switch `NODE_ENV` back to `production` once you are done editing so future launc
 ## 🧹 Stopping & Cleaning Up
 
 -   `docker-compose down` stops the containers.
--   `docker-compose down -v` stops everything and removes the MongoDB volume (this wipes stored résumés, so export documents first).
+-   `docker-compose down -v` stops everything and removes the MongoDB volume (this wipes stored resumes, so export documents first).
 
 ---
 
@@ -127,4 +127,12 @@ Switch `NODE_ENV` back to `production` once you are done editing so future launc
 
 -   Experiment with AI-assisted cover letter drafts built with LaTeX + Mistral models.
 
-Have fun building résumés that stand out!
+---
+
+## 🧱 Architecture Overview
+
+### Deployment Architecture
+
+![Smart Resume Deployment Flow](images/deployment_flow.png)
+
+Have fun building resumes that stand out!
