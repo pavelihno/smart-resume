@@ -4,6 +4,7 @@ import BaseForm from '../BaseForm';
 import DatePickerField from '../../formFields/DatePickerField';
 import BulletedListField from '../../formFields/BulletedListField';
 import TextFieldInput from '../../formFields/TextFieldInput';
+import { formatDateToLocalISO, parseDateValue } from '../../utils/date';
 
 const ProjectForm = ({
 	project,
@@ -19,8 +20,8 @@ const ProjectForm = ({
 		url: project?.url || '',
 		description: project?.description || '',
 		responsibilities: project?.responsibilities || [],
-		startDate: project?.startDate || null,
-		endDate: project?.endDate || null,
+		startDate: parseDateValue(project?.startDate),
+		endDate: parseDateValue(project?.endDate),
 	});
 
 	useEffect(() => {
@@ -30,8 +31,8 @@ const ProjectForm = ({
 				url: project.url,
 				description: project.description,
 				responsibilities: project.responsibilities,
-				startDate: project.startDate ? new Date(project.startDate) : null,
-				endDate: project.endDate ? new Date(project.endDate) : null,
+				startDate: parseDateValue(project.startDate),
+				endDate: parseDateValue(project.endDate),
 			});
 		}
 	}, [project]);
@@ -48,8 +49,8 @@ const ProjectForm = ({
 	const handleFormSubmit = () => {
 		submitProject?.({
 			...formData,
-			startDate: formData.startDate,
-			endDate: formData.endDate,
+			startDate: formatDateToLocalISO(formData.startDate),
+			endDate: formatDateToLocalISO(formData.endDate),
 		});
 	};
 

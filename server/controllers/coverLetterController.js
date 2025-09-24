@@ -8,6 +8,7 @@ import {
 	escapeLatex,
 } from '../utils/latex.js';
 import { badRequestError, internalServerError, notFoundError } from '../utils/errors.js';
+import { formatDayMonthYear } from '../utils/date.js';
 
 const decodeHtmlEntities = (value = '') => {
 	return value
@@ -237,22 +238,7 @@ const convertBodyToLatex = (body, format = BODY_FORMATS.PLAIN) => {
 	}
 };
 
-const formatSentAt = (sentAt) => {
-	if (!sentAt) {
-		return '';
-	}
-	const date = sentAt instanceof Date ? sentAt : new Date(sentAt);
-	if (Number.isNaN(date.getTime())) {
-		return '';
-	}
-	const timeZone = process.env.TZ || 'UTC';
-	return date.toLocaleDateString('default', {
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-		timeZone,
-	});
-};
+const formatSentAt = (sentAt) => formatDayMonthYear(sentAt, { monthStyle: 'long' });
 
 const addCoverLetterToProfile = async (profileId, coverLetterId) => {
 	await Profile.findByIdAndUpdate(profileId, { $addToSet: { coverLetters: coverLetterId } });

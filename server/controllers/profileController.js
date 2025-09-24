@@ -3,12 +3,8 @@ import ProfileSkill from '../models/profileSkill.js';
 import Skill from '../models/skill.js';
 import CoverLetter from '../models/coverLetter.js';
 import { badRequestError, notFoundError, internalServerError } from '../utils/errors.js';
-import {
-	TEMPLATE_CATEGORIES,
-	listTemplates,
-	generateLatexFile,
-	compilePdfFromLatex,
-} from '../utils/latex.js';
+import { formatMonthYear, getDateParts } from '../utils/date.js';
+import { TEMPLATE_CATEGORIES, listTemplates, generateLatexFile, compilePdfFromLatex } from '../utils/latex.js';
 
 const FILE_TYPE = {
 	PDF: 'pdf',
@@ -193,24 +189,24 @@ const getFormattedProfile = async (profileId) => {
         - if the start and end are in the same month, keep only the month and year
         - if the end is missing, return 'Present' 
     */
-	const getStartEndDates = (startDate, endDate) => {
-		const timeZone = process.env.TZ;
-
-		const startMonth = startDate.toLocaleString('default', { month: 'short', timeZone });
-		const startYear = startDate.toLocaleString('default', { year: 'numeric', timeZone });
-		const endMonth = endDate ? endDate.toLocaleString('default', { month: 'short', timeZone }) : null;
-		const endYear = endDate ? endDate.toLocaleString('default', { year: 'numeric', timeZone }) : null;
-
-		if (!endDate) {
-			return [`${startMonth} ${startYear}`, 'Present'];
-		} else if (startYear === endYear) {
-			if (startMonth === endMonth) {
-				return [`${startMonth} ${startYear}`, null];
-			}
-			return [`${startMonth}`, `${endMonth} ${endYear}`];
-		} else {
-			return [`${startMonth} ${startYear}`, `${endMonth} ${endYear}`];
+	const getStartEndDates = (startDateValue, endDateValue) => {
+		const startParts = getDateParts(startDateValue);
+		if (!startParts) {
+			return ['', endDateValue ? '' : 'Present'];
 		}
+		const endParts = getDateParts(endDateValue);
+		if (!endParts) {
+			return [formatMonthYear(startDateValue), 'Present'];
+		}
+
+		if (startParts.year === endParts.year) {
+			if (startParts.month === endParts.month) {
+				return [formatMonthYear(startDateValue), null];
+			}
+			return [formatMonthYear(startDateValue, { includeYear: false }), formatMonthYear(endDateValue)];
+		}
+
+		return [formatMonthYear(startDateValue), formatMonthYear(endDateValue)];
 	};
 
 	const formatDates = (data) => {

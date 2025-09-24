@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import BaseForm from '../BaseForm';
 import TextFieldInput from '../../formFields/TextFieldInput';
 import DatePickerField from '../../formFields/DatePickerField';
+import { formatDateToLocalISO, parseDateValue } from '../../utils/date';
 
 const EducationForm = ({
 	education,
@@ -20,8 +21,8 @@ const EducationForm = ({
 		department: education?.department || '',
 		specialization: education?.specialization || '',
 		location: education?.location || '',
-		startDate: education?.startDate || null,
-		endDate: education?.endDate || null,
+		startDate: parseDateValue(education?.startDate),
+		endDate: parseDateValue(education?.endDate),
 	});
 
 	useEffect(() => {
@@ -33,8 +34,8 @@ const EducationForm = ({
 				department: education.department,
 				specialization: education.specialization,
 				location: education.location,
-				startDate: education.startDate,
-				endDate: education.endDate,
+				startDate: parseDateValue(education.startDate),
+				endDate: parseDateValue(education.endDate),
 			});
 		}
 	}, [education]);
@@ -49,7 +50,11 @@ const EducationForm = ({
 	};
 
 	const handleFormSubmit = () => {
-		submitEducation?.(formData);
+		submitEducation?.({
+			...formData,
+			startDate: formatDateToLocalISO(formData.startDate),
+			endDate: formatDateToLocalISO(formData.endDate),
+		});
 	};
 
 	return (

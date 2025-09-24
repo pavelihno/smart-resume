@@ -7,6 +7,7 @@ import SingleAutocompleteField from '../../formFields/SingleAutocompleteField';
 import DatePickerField from '../../formFields/DatePickerField';
 import HtmlEditorField from '../../formFields/HtmlEditorField';
 import { api } from '../../api';
+import { formatDateToLocalISO, parseDateValue } from '../../utils/date';
 
 const BODY_FORMAT_OPTIONS = [
 	{ value: 'plain', label: 'Plain text' },
@@ -41,7 +42,7 @@ const CoverLetterForm = ({
 		closing: coverLetter?.closing || 'Sincerely,',
 		body: coverLetter?.body || '',
 		bodyFormat: coverLetter?.bodyFormat || 'plain',
-		sentAt: coverLetter?.sentAt ? new Date(coverLetter.sentAt) : null,
+		sentAt: parseDateValue(coverLetter?.sentAt),
 	});
 
 	useEffect(() => {
@@ -70,7 +71,7 @@ const CoverLetterForm = ({
 				closing: coverLetter.closing || 'Sincerely,',
 				body: coverLetter.body || '',
 				bodyFormat: coverLetter.bodyFormat || 'plain',
-				sentAt: coverLetter.sentAt ? new Date(coverLetter.sentAt) : null,
+				sentAt: parseDateValue(coverLetter.sentAt),
 			});
 		}
 	}, [coverLetter]);
@@ -113,7 +114,7 @@ const CoverLetterForm = ({
 			closing: formData.closing.trim(),
 			body: formData.body,
 			bodyFormat: formData.bodyFormat,
-			sentAt: formData.sentAt ? formData.sentAt.toISOString() : null,
+			sentAt: formatDateToLocalISO(formData.sentAt),
 		});
 	};
 

@@ -4,6 +4,7 @@ import BaseForm from '../BaseForm';
 import TextFieldInput from '../../formFields/TextFieldInput';
 import BulletedListField from '../../formFields/BulletedListField';
 import DatePickerField from '../../formFields/DatePickerField';
+import { formatDateToLocalISO, parseDateValue } from '../../utils/date';
 
 const WorkExperienceForm = ({
 	workExperience,
@@ -20,8 +21,8 @@ const WorkExperienceForm = ({
 		domain: workExperience?.domain || '',
 		responsibilities: workExperience?.responsibilities || [],
 		location: workExperience?.location || '',
-		startDate: workExperience?.startDate || null,
-		endDate: workExperience?.endDate || null,
+		startDate: parseDateValue(workExperience?.startDate),
+		endDate: parseDateValue(workExperience?.endDate),
 	});
 
 	useEffect(() => {
@@ -32,8 +33,8 @@ const WorkExperienceForm = ({
 				domain: workExperience.domain,
 				responsibilities: workExperience.responsibilities,
 				location: workExperience.location,
-				startDate: workExperience.startDate,
-				endDate: workExperience.endDate,
+				startDate: parseDateValue(workExperience.startDate),
+				endDate: parseDateValue(workExperience.endDate),
 			});
 		}
 	}, [workExperience]);
@@ -48,7 +49,11 @@ const WorkExperienceForm = ({
 	};
 
 	const handleFormSubmit = () => {
-		submitWorkExperience?.(formData);
+		submitWorkExperience?.({
+			...formData,
+			startDate: formatDateToLocalISO(formData.startDate),
+			endDate: formatDateToLocalISO(formData.endDate),
+		});
 	};
 
 	return (
