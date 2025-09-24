@@ -18,9 +18,10 @@
     "sass": "^1.84.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
-  },
+		"prod": "react-scripts start",
+		"dev": "WATCHPACK_POLLING=true react-scripts start",
+		"build": "react-scripts build"
+	},
   "browserslist": {
     "production": [
       ">0.2%",

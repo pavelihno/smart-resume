@@ -12,18 +12,24 @@ services:
       - .env
     depends_on:
       - smart-resume-server
+    volumes:
+      - ./client:/app
+      - /app/node_modules
 
   smart-resume-server:
     container_name: smart-resume-server
     build:
       context: ./server
-      dockerfile: 'Dockerfile.${REACT_APP_PDF_GENERATION_MODE}'
+      dockerfile: 'Dockerfile.${REACT_APP_PDF_GENERATION_MODE}.${NODE_ENV}'
     ports:
       - 8080:8080
     env_file:
       - .env
     depends_on:
       - mongo
+    volumes:
+      - ./server:/app
+      - /app/node_modules
 
   mongo:
     image: mongo:latest
