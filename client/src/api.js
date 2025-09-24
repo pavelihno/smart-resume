@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const isProd = process.env.NODE_ENV === 'production';
+import { isProd } from './config';
 
 export const baseUrl = isProd ? '/api' : 'http://localhost:8080';
 

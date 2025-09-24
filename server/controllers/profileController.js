@@ -8,8 +8,6 @@ import {
 	listTemplates,
 	generateLatexFile,
 	compilePdfFromLatex,
-	isLocalPdfEnabled,
-	getPdfGenerationMode,
 } from '../utils/latex.js';
 
 const FILE_TYPE = {
@@ -261,13 +259,6 @@ const generateProfileFile = async (req, res, type) => {
 		}
 
 		const formatedProfile = await getFormattedProfile(profileId);
-		if (type === FILE_TYPE.PDF && !isLocalPdfEnabled()) {
-			const pdfMode = getPdfGenerationMode();
-			return badRequestError(
-				res,
-				`PDF generation is disabled because REACT_APP_PDF_GENERATION_MODE="${pdfMode}". Download the TeX file and compile it with Overleaf.`
-			);
-		}
 
 		const templateName = req.query.template || 'default';
 		const { latexContent, texPath } = generateLatexFile(formatedProfile, TEMPLATE_CATEGORIES.RESUME, templateName);

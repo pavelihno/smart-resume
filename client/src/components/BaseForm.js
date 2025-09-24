@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 
 import Base from './Base';
+import { isPdfGenerationEnabled } from '../config';
 
 const BaseForm = ({
 	title,
@@ -124,7 +125,7 @@ const BaseForm = ({
 											fullWidth
 										/>
 										<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-											{handleGeneratePdf && (
+											{isPdfGenerationEnabled && handleGeneratePdf && (
 												<Button
 													variant='contained'
 													sx={{

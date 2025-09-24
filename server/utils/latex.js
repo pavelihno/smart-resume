@@ -25,8 +25,6 @@ export const getPdfGenerationMode = () => {
 	return (process.env.REACT_APP_PDF_GENERATION_MODE || PDF_GENERATION_MODES.LOCAL).toLowerCase();
 };
 
-export const isPdfGenerationEnabled = () => getPdfGenerationMode() === PDF_GENERATION_MODES.LOCAL;
-
 export const isLocalPdfEnabled = () => getPdfGenerationMode() === PDF_GENERATION_MODES.LOCAL;
 
 const NAMED_HTML_ENTITIES = {

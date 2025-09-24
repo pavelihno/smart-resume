@@ -6,8 +6,6 @@ import {
 	generateLatexFile,
 	compilePdfFromLatex,
 	escapeLatex,
-	isLocalPdfEnabled,
-	getPdfGenerationMode,
 } from '../utils/latex.js';
 import { badRequestError, internalServerError, notFoundError } from '../utils/errors.js';
 
@@ -457,13 +455,6 @@ const generateCoverLetterFile = async (req, res, type) => {
 		}
 
 		const templateName = req.query.template || 'default';
-		if (type === 'pdf' && !isLocalPdfEnabled()) {
-			const pdfMode = getPdfGenerationMode();
-			return badRequestError(
-				res,
-				`PDF generation is disabled because REACT_APP_PDF_GENERATION_MODE="${pdfMode}". Download the TeX file and compile it with Overleaf.`
-			);
-		}
 
 		const { latexContent, texPath } = generateLatexFile(payload, TEMPLATE_CATEGORIES.LETTER, templateName);
 		const { profile } = payload;
