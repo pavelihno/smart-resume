@@ -204,6 +204,8 @@ const htmlToTokenizedText = (html) => {
 	);
 
 	result = result.replace(/<\s*br\s*\/?\s*>/gi, '\n');
+	result = result.replace(/<\s*\/div\s*>/gi, '\n');
+	result = result.replace(/<\s*div[^>]*>/gi, '\n');
 	result = result.replace(/<\s*\/p\s*>/gi, '\n\n');
 	result = result.replace(/<\s*p[^>]*>/gi, '');
 	result = result.replace(/<\s*ol[^>]*>/gi, '\n[[OL_START]]\n');
@@ -212,7 +214,7 @@ const htmlToTokenizedText = (html) => {
 	result = result.replace(/<\s*\/ul\s*>/gi, '\n[[UL_END]]\n');
 	result = result.replace(/<\s*li[^>]*>/gi, '\n[[LI]] ');
 	result = result.replace(/<\s*\/li\s*>/gi, '');
-	result = result.replace(/<[^>]+>/g, '');
+	result = result.replace(/<[^>]+>/g, '').trim();
 
 	return decodeHtmlEntities(result);
 };
