@@ -30,8 +30,17 @@ const WorkExperienceList = () => {
 		try {
 			await api.delete(`/work-experiences/${id}`);
 			setWorkExperiences((prevWorkExperiences) =>
-				prevWorkExperiences.filter((workExperience) => workExperience._id !== id)
+				prevWorkExperiences.filter((workExperience) => workExperience._id !== id),
 			);
+		} catch (error) {
+			setErrors(error.response.data);
+		}
+	};
+
+	const handleCopy = async (id) => {
+		try {
+			const response = await api.post(`/work-experiences/${id}/copy`);
+			setWorkExperiences((prevWorkExperiences) => [...prevWorkExperiences, response.data]);
 		} catch (error) {
 			setErrors(error.response.data);
 		}
@@ -52,6 +61,7 @@ const WorkExperienceList = () => {
 			rows={workExperiences}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			handleCopy={handleCopy}
 			sortKey='position'
 		/>
 	);
