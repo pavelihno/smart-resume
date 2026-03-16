@@ -11,6 +11,28 @@ export const createWorkExperience = async (req, res) => {
 	}
 };
 
+export const copyWorkExperience = async (req, res) => {
+	try {
+		const originalWorkExperience = await WorkExperience.findById(req.params.id);
+		if (!originalWorkExperience) {
+			return notFoundError(res, 'Work Experience not found');
+		}
+
+		const cloneData = originalWorkExperience.toObject();
+		cloneData.position = cloneData.position ? `${cloneData.position} (Copy)` : 'Work Experience (Copy)';
+		delete cloneData._id;
+		delete cloneData.createdAt;
+		delete cloneData.updatedAt;
+
+		const duplicatedWorkExperience = new WorkExperience(cloneData);
+		await duplicatedWorkExperience.save();
+
+		return res.status(201).json(duplicatedWorkExperience);
+	} catch (error) {
+		return internalServerError(res, error.message);
+	}
+};
+
 export const getWorkExperiences = async (req, res) => {
 	try {
 		const workExperiences = await WorkExperience.find().sort({ updatedAt: -1 });

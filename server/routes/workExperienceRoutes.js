@@ -1,6 +1,7 @@
 import express from 'express';
 import {
 	createWorkExperience,
+	copyWorkExperience,
 	getWorkExperiences,
 	getWorkExperienceById,
 	updateWorkExperience,
@@ -10,6 +11,7 @@ import {
 const router = express.Router();
 
 router.post('/', createWorkExperience);
+router.post('/:id/copy', copyWorkExperience);
 router.get('/', getWorkExperiences);
 router.get('/:id', getWorkExperienceById);
 router.put('/:id', updateWorkExperience);
