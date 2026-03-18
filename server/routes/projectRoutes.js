@@ -1,6 +1,7 @@
 import express from 'express';
 import {
 	createProject,
+	copyProject,
 	getProjects,
 	getProjectById,
 	updateProject,
@@ -10,6 +11,7 @@ import {
 const router = express.Router();
 
 router.post('/', createProject);
+router.post('/:id/copy', copyProject);
 router.get('/', getProjects);
 router.get('/:id', getProjectById);
 router.put('/:id', updateProject);

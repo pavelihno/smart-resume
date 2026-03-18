@@ -35,6 +35,15 @@ const SkillList = () => {
 		}
 	};
 
+	const handleCopy = async (id) => {
+		try {
+			const response = await api.post(`/skills/${id}/copy`);
+			setSkills((prevSkills) => [...prevSkills, response.data]);
+		} catch (error) {
+			setErrors(error.response?.data || { message: 'Failed to copy skill' });
+		}
+	};
+
 	const columns = {
 		title: 'Title',
 		details: 'Details',
@@ -48,6 +57,7 @@ const SkillList = () => {
 			rows={skills}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			handleCopy={handleCopy}
 			sortKey='title'
 		/>
 	);

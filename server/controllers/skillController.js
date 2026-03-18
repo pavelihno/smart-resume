@@ -11,6 +11,28 @@ export const createSkill = async (req, res) => {
 	}
 };
 
+export const copySkill = async (req, res) => {
+	try {
+		const originalSkill = await Skill.findById(req.params.id);
+		if (!originalSkill) {
+			return notFoundError(res, 'Skill not found');
+		}
+
+		const cloneData = originalSkill.toObject();
+		cloneData.title = cloneData.title ? `${cloneData.title} (Copy)` : 'Skill (Copy)';
+		delete cloneData._id;
+		delete cloneData.createdAt;
+		delete cloneData.updatedAt;
+
+		const duplicatedSkill = new Skill(cloneData);
+		await duplicatedSkill.save();
+
+		return res.status(201).json(duplicatedSkill);
+	} catch (error) {
+		return internalServerError(res, error.message);
+	}
+};
+
 export const getSkills = async (req, res) => {
 	try {
 		const skills = await Skill.find().sort({ updatedAt: -1 });

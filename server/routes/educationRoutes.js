@@ -1,6 +1,7 @@
 import express from 'express';
 import {
 	createEducation,
+	copyEducation,
 	getEducations,
 	getEducationById,
 	updateEducation,
@@ -10,6 +11,7 @@ import {
 const router = express.Router();
 
 router.post('/', createEducation);
+router.post('/:id/copy', copyEducation);
 router.get('/', getEducations);
 router.get('/:id', getEducationById);
 router.put('/:id', updateEducation);

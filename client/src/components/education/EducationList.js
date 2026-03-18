@@ -35,6 +35,15 @@ const EducationList = () => {
 		}
 	};
 
+	const handleCopy = async (id) => {
+		try {
+			const response = await api.post(`/educations/${id}/copy`);
+			setEducations((prevEducations) => [...prevEducations, response.data]);
+		} catch (error) {
+			setErrors(error.response?.data || { message: 'Failed to copy education' });
+		}
+	};
+
 	const columns = {
 		institution: 'Institution',
 		educationLevel: 'Education Level',
@@ -52,6 +61,7 @@ const EducationList = () => {
 			rows={educations}
 			handleEdit={handleEdit}
 			handleDelete={handleDelete}
+			handleCopy={handleCopy}
 			sortKey='institution'
 		/>
 	);

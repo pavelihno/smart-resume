@@ -1,4 +1,3 @@
-// filepath: /projects/smart-resume/client/src/components/project/ProjectList.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BaseList from '../BaseList';
@@ -35,6 +34,15 @@ const ProjectList = () => {
 		}
 	};
 
+	const handleCopy = async (id) => {
+		try {
+			const response = await api.post(`/projects/${id}/copy`);
+			setProjects((prevProjects) => [...prevProjects, response.data]);
+		} catch (error) {
+			setErrors(error.response?.data || { message: 'Failed to copy project' });
+		}
+	};
+
 	const columns = {
 		title: 'Title',
 		url: 'URL',
@@ -48,6 +56,7 @@ const ProjectList = () => {
 			columns={columns}
 			rows={projects}
 			handleEdit={handleEdit}
+			handleCopy={handleCopy}
 			handleDelete={handleDelete}
 			sortKey='title'
 		/>

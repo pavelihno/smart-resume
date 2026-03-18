@@ -11,6 +11,28 @@ export const createEducation = async (req, res) => {
 	}
 };
 
+export const copyEducation = async (req, res) => {
+	try {
+		const originalEducation = await Education.findById(req.params.id);
+		if (!originalEducation) {
+			return notFoundError(res, 'Education not found');
+		}
+
+		const cloneData = originalEducation.toObject();
+		cloneData.institution = cloneData.institution ? `${cloneData.institution} (Copy)` : 'Education (Copy)';
+		delete cloneData._id;
+		delete cloneData.createdAt;
+		delete cloneData.updatedAt;
+
+		const duplicatedEducation = new Education(cloneData);
+		await duplicatedEducation.save();
+
+		return res.status(201).json(duplicatedEducation);
+	} catch (error) {
+		return internalServerError(res, error.message);
+	}
+};
+
 export const getEducations = async (req, res) => {
 	try {
 		const educations = await Education.find().sort({ updatedAt: -1 });
