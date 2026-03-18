@@ -10,8 +10,8 @@
 \usepackage{fancyhdr}
 \usepackage{tabularx}
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[english]{babel}
+\usepackage[T2A]{fontenc}
+\usepackage[russian,english]{babel}
 \input{glyphtounicode}
 
 
@@ -106,14 +106,14 @@
 \end{center}
 
 %-----------EXPERIENCE-----------
-\section{Work Experience}
+\section{Опыт работы}
   \resumeSubHeadingListStart
   {{#each workExperiences}}
     \resumeSubheading
     { {{this.position}} }{ {{this.startDate}}{{#if this.endDate}} -- {{this.endDate}}{{/if}} }
         { {{this.company}} }{ {{this.location}} }
         \resumeItemListStart
-          \resumeItem{\textbf{Domain}: {{this.domain}} }
+          \resumeItem{\textbf{Область}: {{this.domain}} }
           {{#each this.responsibilities}}
           \resumeItem{ {{this}} }
           {{/each}}
@@ -122,7 +122,7 @@
   \resumeSubHeadingListEnd
 
 %-----------EDUCATION-----------
-\section{Education}
+\section{Образование}
   \resumeSubHeadingListStart
   {{#each educations}}
     \resumeSubheading
@@ -135,7 +135,7 @@
   \resumeSubHeadingListEnd
 
 %-----------SKILLS-----------
-\section{Skills}
+\section{Навыки}
  \begin{itemize}[leftmargin=0.15in, label={}]
     \small{\item{
       {{#each skills}}
@@ -145,7 +145,7 @@
  \end{itemize}
 
 %-----------PROJECTS & PUBLICATIONS-----------
-\section{Projects}
+\section{Проекты}
     \resumeSubHeadingListStart
     {{#each projects}}
       \resumeProjectHeading

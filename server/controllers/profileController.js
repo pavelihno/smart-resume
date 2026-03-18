@@ -5,10 +5,34 @@ import CoverLetter from '../models/coverLetter.js';
 import { badRequestError, notFoundError, internalServerError } from '../utils/errors.js';
 import { formatMonthYear, getDateParts } from '../utils/date.js';
 import { TEMPLATE_CATEGORIES, listTemplates, generateLatexFile, compilePdfFromLatex } from '../utils/latex.js';
+import { resolveTemplateName, getLocaleFromTemplateName } from '../utils/templateLanguage.js';
 
 const FILE_TYPE = {
 	PDF: 'pdf',
 	TEX: 'tex',
+};
+
+const getPresentLabel = (locale = 'en-US') => {
+	return locale.toLowerCase().startsWith('ru') ? 'Настоящее время' : 'Present';
+};
+
+const buildContentDisposition = (fileName) => {
+	const normalizedName = String(fileName || '')
+		.replace(/[\r\n]+/g, ' ')
+		.replace(/[\\/:*?"<>|]+/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+
+	const utf8FileName = normalizedName || 'file';
+	const asciiFallback = utf8FileName
+		.normalize('NFKD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^\x20-\x7E]/g, '_')
+		.replace(/["]+/g, '')
+		.trim() || 'file';
+
+	const encoded = encodeURIComponent(utf8FileName);
+	return `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encoded}`;
 };
 
 const createProfileSkill = async (profileId, skillData) => {
@@ -52,7 +76,7 @@ export const createProfile = async (req, res) => {
 export const copyProfile = async (req, res) => {
 	try {
 		const originalProfile = await Profile.findById(req.params.id).populate(
-			'workExperiences educations skills projects links coverLetters'
+			'workExperiences educations skills projects links coverLetters',
 		);
 		if (!originalProfile) {
 			return notFoundError(res, 'Profile not found');
@@ -96,7 +120,7 @@ export const getProfiles = async (req, res) => {
 export const getProfileById = async (req, res) => {
 	try {
 		const profile = await Profile.findById(req.params.id).populate(
-			'workExperiences educations skills projects links coverLetters'
+			'workExperiences educations skills projects links coverLetters',
 		);
 		if (!profile) {
 			return notFoundError(res, 'Profile not found');
@@ -164,7 +188,7 @@ export const getTemplates = (req, res) => {
 	}
 };
 
-const getFormattedProfile = async (profileId) => {
+const getFormattedProfile = async (profileId, { locale = 'en-US', presentLabel = 'Present' } = {}) => {
 	const profile = await Profile.findById(profileId)
 		.populate('workExperiences educations projects links')
 		.populate({
@@ -192,21 +216,24 @@ const getFormattedProfile = async (profileId) => {
 	const getStartEndDates = (startDateValue, endDateValue) => {
 		const startParts = getDateParts(startDateValue);
 		if (!startParts) {
-			return ['', endDateValue ? '' : 'Present'];
+			return ['', endDateValue ? '' : presentLabel];
 		}
 		const endParts = getDateParts(endDateValue);
 		if (!endParts) {
-			return [formatMonthYear(startDateValue), 'Present'];
+			return [formatMonthYear(startDateValue, { locale }), presentLabel];
 		}
 
 		if (startParts.year === endParts.year) {
 			if (startParts.month === endParts.month) {
-				return [formatMonthYear(startDateValue), null];
+				return [formatMonthYear(startDateValue, { locale }), null];
 			}
-			return [formatMonthYear(startDateValue, { includeYear: false }), formatMonthYear(endDateValue)];
+			return [
+				formatMonthYear(startDateValue, { includeYear: false, locale }),
+				formatMonthYear(endDateValue, { locale }),
+			];
 		}
 
-		return [formatMonthYear(startDateValue), formatMonthYear(endDateValue)];
+		return [formatMonthYear(startDateValue, { locale }), formatMonthYear(endDateValue, { locale })];
 	};
 
 	const formatDates = (data) => {
@@ -240,6 +267,9 @@ const getFormattedProfile = async (profileId) => {
 const generateProfileFile = async (req, res, type) => {
 	try {
 		const profileId = req.params.id;
+		const templateName = resolveTemplateName(req.query.template);
+		const locale = getLocaleFromTemplateName(templateName);
+		const presentLabel = getPresentLabel(locale);
 		const profile = await Profile.findById(profileId);
 		if (!profile) {
 			return notFoundError(res, 'Profile not found');
@@ -254,9 +284,7 @@ const generateProfileFile = async (req, res, type) => {
 			return badRequestError(res, 'Profile fields cannot be empty');
 		}
 
-		const formatedProfile = await getFormattedProfile(profileId);
-
-		const templateName = req.query.template || 'default';
+		const formatedProfile = await getFormattedProfile(profileId, { locale, presentLabel });
 		const { latexContent, texPath } = generateLatexFile(formatedProfile, TEMPLATE_CATEGORIES.RESUME, templateName);
 
 		let filePath = texPath;
@@ -270,7 +298,7 @@ const generateProfileFile = async (req, res, type) => {
 
 		res.setHeader(
 			'Content-Disposition',
-			`attachment; filename="${formatedProfile.name}. ${formatedProfile.title}.${type}"`
+			buildContentDisposition(`${formatedProfile.name}. ${formatedProfile.title}.${type}`),
 		);
 		res.status(200).sendFile(filePath, (err) => {
 			if (err) {

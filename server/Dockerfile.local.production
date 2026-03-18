@@ -12,6 +12,7 @@ RUN apk add --no-cache \
     tzdata \
     texlive \
     texmf-dist-latexextra \
+    texmf-dist-langcyrillic \
     texmf-dist-fontsextra
 
 WORKDIR /app

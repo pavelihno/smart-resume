@@ -9,6 +9,27 @@ import {
 } from '../utils/latex.js';
 import { badRequestError, internalServerError, notFoundError } from '../utils/errors.js';
 import { formatDayMonthYear } from '../utils/date.js';
+import { resolveTemplateName, getLocaleFromTemplateName } from '../utils/templateLanguage.js';
+
+const buildContentDisposition = (fileName) => {
+	const normalizedName = String(fileName || '')
+		.replace(/[\r\n]+/g, ' ')
+		.replace(/[\\/:*?"<>|]+/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+
+	const utf8FileName = normalizedName || 'file';
+	const asciiFallback =
+		utf8FileName
+			.normalize('NFKD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/[^\x20-\x7E]/g, '_')
+			.replace(/["]+/g, '')
+			.trim() || 'file';
+
+	const encoded = encodeURIComponent(utf8FileName);
+	return `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encoded}`;
+};
 
 const decodeHtmlEntities = (value = '') => {
 	return value
@@ -75,6 +96,7 @@ const normalizePlainTextBlocks = (text) => {
 	let paragraphLines = [];
 	let listItems = [];
 	let currentListEnv = null;
+	let isExplicitList = false;
 
 	const flushParagraph = () => {
 		if (paragraphLines.length === 0) {
@@ -93,14 +115,19 @@ const normalizePlainTextBlocks = (text) => {
 		}
 		blocks.push({ type: 'list', env: currentListEnv || 'itemize', items: [...listItems] });
 		listItems = [];
+		isExplicitList = false;
 	};
 
 	for (const rawLine of lines) {
 		const line = rawLine.trim();
 		if (!line) {
+			if (currentListEnv && isExplicitList) {
+				continue;
+			}
 			flushParagraph();
 			flushList();
 			currentListEnv = null;
+			isExplicitList = false;
 			continue;
 		}
 
@@ -108,6 +135,7 @@ const normalizePlainTextBlocks = (text) => {
 			flushParagraph();
 			flushList();
 			currentListEnv = 'itemize';
+			isExplicitList = true;
 			continue;
 		}
 
@@ -115,12 +143,14 @@ const normalizePlainTextBlocks = (text) => {
 			flushParagraph();
 			flushList();
 			currentListEnv = 'enumerate';
+			isExplicitList = true;
 			continue;
 		}
 
 		if (line === '[[UL_END]]' || line === '[[OL_END]]') {
 			flushList();
 			currentListEnv = null;
+			isExplicitList = false;
 			continue;
 		}
 
@@ -128,8 +158,9 @@ const normalizePlainTextBlocks = (text) => {
 			const content = line.replace(/^\[\[LI\]\]\s*/, '');
 			if (!currentListEnv) {
 				currentListEnv = 'itemize';
+				isExplicitList = true;
 			}
-			listItems.push(content);
+			listItems.push(content.trim());
 			continue;
 		}
 
@@ -141,6 +172,7 @@ const normalizePlainTextBlocks = (text) => {
 			if (!currentListEnv) {
 				flushParagraph();
 				currentListEnv = env;
+				isExplicitList = false;
 			}
 			const itemContent = env === 'itemize' ? line.slice(2) : line.replace(/^\d+[).\s]*/, '');
 			listItems.push(itemContent.trim());
@@ -150,6 +182,7 @@ const normalizePlainTextBlocks = (text) => {
 		if (currentListEnv) {
 			flushList();
 			currentListEnv = null;
+			isExplicitList = false;
 		}
 
 		paragraphLines.push(line);
@@ -200,7 +233,7 @@ const htmlToTokenizedText = (html) => {
 		(match, _full, href1, href2, href3, label) => {
 			const href = href1 || href2 || href3 || '';
 			return `[[A:${href.trim()}]]${label}[[/A]]`;
-		}
+		},
 	);
 
 	result = result.replace(/<\s*br\s*\/?\s*>/gi, '\n');
@@ -240,7 +273,7 @@ const convertBodyToLatex = (body, format = BODY_FORMATS.PLAIN) => {
 	}
 };
 
-const formatSentAt = (sentAt) => formatDayMonthYear(sentAt, { monthStyle: 'long' });
+const formatSentAt = (sentAt, locale = 'en-US') => formatDayMonthYear(sentAt, { monthStyle: 'long', locale });
 
 const addCoverLetterToProfile = async (profileId, coverLetterId) => {
 	await Profile.findByIdAndUpdate(profileId, { $addToSet: { coverLetters: coverLetterId } });
@@ -250,7 +283,7 @@ const removeCoverLetterFromProfile = async (profileId, coverLetterId) => {
 	await Profile.findByIdAndUpdate(profileId, { $pull: { coverLetters: coverLetterId } });
 };
 
-const buildTemplatePayload = async (coverLetterId) => {
+const buildTemplatePayload = async (coverLetterId, { locale = 'en-US' } = {}) => {
 	const coverLetter = await CoverLetter.findById(coverLetterId)
 		.populate({
 			path: 'profile',
@@ -285,7 +318,7 @@ const buildTemplatePayload = async (coverLetterId) => {
 		senderLocation: coverLetter.senderLocation,
 		salutation: coverLetter.salutation,
 		closing: coverLetter.closing,
-		sentAt: formatSentAt(coverLetter.sentAt),
+		sentAt: formatSentAt(coverLetter.sentAt, locale),
 		body: {
 			__raw: true,
 			value: convertBodyToLatex(coverLetter.body, coverLetter.bodyFormat),
@@ -437,12 +470,12 @@ export const getCoverLetterTemplates = (req, res) => {
 const generateCoverLetterFile = async (req, res, type) => {
 	try {
 		const { id } = req.params;
-		const payload = await buildTemplatePayload(id);
+		const templateName = resolveTemplateName(req.query.template);
+		const locale = getLocaleFromTemplateName(templateName);
+		const payload = await buildTemplatePayload(id, { locale });
 		if (!payload) {
 			return notFoundError(res, 'Cover letter not found');
 		}
-
-		const templateName = req.query.template || 'default';
 
 		const { latexContent, texPath } = generateLatexFile(payload, TEMPLATE_CATEGORIES.LETTER, templateName);
 		const { profile } = payload;
@@ -461,7 +494,7 @@ const generateCoverLetterFile = async (req, res, type) => {
 			return internalServerError(res, 'PDF file could not be generated');
 		}
 
-		res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+		res.setHeader('Content-Disposition', buildContentDisposition(fileName));
 		res.status(200).sendFile(filePath, (err) => {
 			if (err) {
 				return internalServerError(res, err.message);

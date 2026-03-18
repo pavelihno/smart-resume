@@ -1,22 +1,19 @@
-const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const MONTHS_LONG = [
-	'January',
-	'February',
-	'March',
-	'April',
-	'May',
-	'June',
-	'July',
-	'August',
-	'September',
-	'October',
-	'November',
-	'December',
-];
+const DEFAULT_LOCALE = 'en-US';
 
-const getMonthLabel = (month, style = 'short') => {
-	const collection = style === 'long' ? MONTHS_LONG : MONTHS_SHORT;
-	return collection[Math.max(0, Math.min(collection.length - 1, month - 1))];
+const normalizeLocale = (locale) => {
+	if (typeof locale !== 'string' || locale.trim().length === 0) {
+		return DEFAULT_LOCALE;
+	}
+	return locale.trim();
+};
+
+const getMonthLabel = (year, month, style = 'short', locale = DEFAULT_LOCALE) => {
+	const date = new Date(Date.UTC(year, Math.max(0, Math.min(11, month - 1)), 1));
+	const formatter = new Intl.DateTimeFormat(normalizeLocale(locale), {
+		month: style === 'long' ? 'long' : 'short',
+		timeZone: 'UTC',
+	});
+	return formatter.format(date).replace(/\.$/, '');
 };
 
 export const parseDateValue = (value) => {
@@ -39,20 +36,20 @@ export const getDateParts = (value) => {
 	return { year, month, day };
 };
 
-export const formatDayMonthYear = (value, { monthStyle = 'long' } = {}) => {
+export const formatDayMonthYear = (value, { monthStyle = 'long', locale = DEFAULT_LOCALE } = {}) => {
 	const parts = getDateParts(value);
 	if (!parts) {
 		return '';
 	}
-	const monthLabel = getMonthLabel(parts.month, monthStyle);
+	const monthLabel = getMonthLabel(parts.year, parts.month, monthStyle, locale);
 	return `${parts.day} ${monthLabel} ${parts.year}`;
 };
 
-export const formatMonthYear = (value, { monthStyle = 'short', includeYear = true } = {}) => {
+export const formatMonthYear = (value, { monthStyle = 'short', includeYear = true, locale = DEFAULT_LOCALE } = {}) => {
 	const parts = getDateParts(value);
 	if (!parts) {
 		return '';
 	}
-	const monthLabel = getMonthLabel(parts.month, monthStyle);
+	const monthLabel = getMonthLabel(parts.year, parts.month, monthStyle, locale);
 	return includeYear ? `${monthLabel} ${parts.year}` : monthLabel;
 };
