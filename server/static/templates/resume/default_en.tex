@@ -131,6 +131,11 @@
         \resumeSubSubheading
           { {{this.specialization}} }
           {}
+        {{#hasText this.grade}}
+        \resumeSubSubheading
+          { Grade:\textbf{ {{this.grade}} }}
+          {}
+        {{/hasText}}
   {{/each}}
   \resumeSubHeadingListEnd
 

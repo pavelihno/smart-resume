@@ -20,6 +20,7 @@ const EducationForm = ({
 		degree: education?.degree || '',
 		department: education?.department || '',
 		specialization: education?.specialization || '',
+		grade: education?.grade || '',
 		location: education?.location || '',
 		startDate: parseDateValue(education?.startDate),
 		endDate: parseDateValue(education?.endDate),
@@ -33,6 +34,7 @@ const EducationForm = ({
 				degree: education.degree,
 				department: education.department,
 				specialization: education.specialization,
+				grade: education.grade,
 				location: education.location,
 				startDate: parseDateValue(education.startDate),
 				endDate: parseDateValue(education.endDate),
@@ -97,6 +99,7 @@ const EducationForm = ({
 						onChange={handleChange}
 						required
 					/>
+					<TextFieldInput label='Grade' name='grade' value={formData.grade} onChange={handleChange} />
 					<TextFieldInput
 						label='Location'
 						name='location'

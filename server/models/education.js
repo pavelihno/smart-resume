@@ -22,6 +22,9 @@ const EducationSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		grade: {
+			type: String,
+		},
 		location: {
 			type: String,
 			required: true,
